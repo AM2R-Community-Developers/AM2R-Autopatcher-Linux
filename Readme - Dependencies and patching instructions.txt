@@ -24,6 +24,7 @@ AM2R:
 	- libxrandr2:i386
 	- libglu1:i386
 	- libidn11:i386
+	- libssl1.0.0:i386
 
 Controller support:
 	- jstest-gtk
