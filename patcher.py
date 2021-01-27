@@ -212,20 +212,42 @@ else:
     print("Invalid input. Exiting.")
     quit()
 
-#creating the desktop file
-cwd = os.getcwd()
-print("Creating .desktop File now...")
-desktopFilePath = output+"/AM2R.desktop"
-copy("DesktopTemplate", desktopFilePath)
-desktopFile = open(desktopFilePath, 'r+')
-fileContents = desktopFile.read()
-fileContents = fileContents.replace("[REPLACE]", cwd+'/'+output)
-desktopFile.seek(0)
-desktopFile.write(fileContents)
-
-#make the desktopFile and game executable
-subprocess.call(["chmod", "+x", desktopFilePath])
+#make game executable
 subprocess.call(["chmod", "+x", output+"/AM2R"])
+
+print("Do you want to install AM2R systemwide?\n\n[y/n]\n")
+inp = getch()
+
+if( inp == 'y'):
+    #install it to /usr/local/bin
+    #couldn't figure it out, how to do it with a normal cp command, so I just copy everything manually
+    #except for /assets
+    for file8 in glob.glob(output + "/*"):
+        if("assets" in file8):
+            continue
+        subprocess.call(["sudo", "cp", file8 , "/usr/local/bin/am2r/"])
+    subprocess.call(["sudo", "cp", "-r", output+"/assets/" , "/usr/local/bin/am2r/"])
+    template = open("DesktopTemplate", "r")
+    fileContents = template.read()
+    fileContents = fileContents.replace("[REPLACE]", "/usr/local/bin/am2r")
+    desktopFile = open(output+"/AM2R.desktop", "w+")
+    desktopFile.seek(0)
+    desktopFile.write(fileContents)
+    subprocess.call(["sudo", "mv", output+"/AM2R.desktop", "/usr/share/applications/AM2R.desktop"])
+    #we could chmod ./AM2R, but it's not really necessary
+else:
+    #creating the desktop file for local
+    cwd = os.getcwd()
+    desktopFilePath = output+"/AM2R.desktop"
+    copy("DesktopTemplate", desktopFilePath)
+    desktopFile = open(desktopFilePath, 'r+')
+    fileContents = desktopFile.read()
+    fileContents = fileContents.replace("[REPLACE]", cwd+'/'+output)
+    desktopFile.seek(0)
+    desktopFile.write(fileContents)
+    #make the desktopFile executable. For some reason, this is not necessary, when copying it into /applications
+    subprocess.call(["chmod", "+x", desktopFilePath])
+
 print("Desktop file has been created!")
 
 
