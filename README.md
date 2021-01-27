@@ -17,16 +17,19 @@ To enable it, go to `/etc/pacman.conf` search for `[multilib]` and make sure, th
 `sudo dnf install python xdelta openal-soft compat-openssl10`
 
 
-## Patching process
+## Linux Patching process
 To patch your copy of AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.
+
+## Android Patching process
+For this, two more dependencies are required, AAPT and at Java JDK 8. AAPT is part of the Android SDK and is rarely in a package manager. Your best option would be to use Android Studio in order to install the SDK, or use the binary provided [here](https://androidaapt.com/) and place it somewhere recognizable by path (Either make an alias for it, or place it i.e. to /usr/local/bin).
 
 ## After Patching
 Navigate to the newly created folder and make sure, that `AM2R` is marked as an executable. If it's not, do it with `chmod +x ./AM2R`. After that, launch AM2R with `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.
 It's heavily recommended to create a .desktop file, so AM2R is recognized by your start menu, and so you can start it without typing the full command everytime.
 (Will hopefully provide a .desktop file or a command to do it later)
 
-
 If after installing the packages, you still can't run AM2R, use `ldd` in order to find out which packages are missing. If that happens, or you have other questions/issues, please file an issue, or ask in either [r/AM2R](https://www.reddit.com/r/AM2R/) or the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).
+As a last resort, you can always play it via Wine or Proton.
 
 ## Android installation instructions
 You will need an Android device with a file explorer application installed, and a USB cable to connect said device to your computer.
