@@ -6,7 +6,7 @@ The patcher and the installer requires several dependencies, depending on the di
 As it's the case on Linux, please make sure that your packages and your package list are up-to-date. 
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS etc.)
-As Arch doesn't do it normally, make sure that multilib is enabled, as this is a 32-bit application.
+As Arch doesn't do it normally, make sure that multilib is enabled, as this is a 32-bit application.<br>
 To enable it, go to `/etc/pacman.conf` search for `[multilib]` and make sure, that both this and the next line is uncommented.
 `sudo pacman -S --needed python xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
