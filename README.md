@@ -6,7 +6,7 @@ The patcher and the installer requires several dependencies, depending on the di
 As it's the case on Linux, please make sure that your packages and your package list are up-to-date. 
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS etc.)
-As Arch doesn't do it normally, make sure that the multilib is enabled, as this is a 32-bit application.
+As Arch doesn't do it normally, make sure that multilib is enabled, as this is a 32-bit application.
 To enable it, go to `/etc/pacman.conf` search for `[multilib]` and make sure, that both this and the next line is uncommented.
 `sudo pacman -S --needed python xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
@@ -14,7 +14,27 @@ To enable it, go to `/etc/pacman.conf` search for `[multilib]` and make sure, th
 `sudo apt install python xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl3:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386 jstest-gtk joystick` 
 
 ### Fedora
-TODO
+`sudo dnf install python xdelta openal-soft compat-openssl10`
 
-### OpenSuse
-TODO
+
+## Patching process
+To patch your copy of AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.
+
+## After Patching
+Navigate to the newly created folder and make sure, that `AM2R` is marked as an executable. If it's not, do it with `chmod +x ./AM2R`. After that, launch AM2R with `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.
+It's heavily recommended to create a .desktop file, so AM2R is recognized by your start menu, and so you can start it without typing the full command everytime.
+(Will hopefully provide a .desktop file or a command to do it later)
+
+
+If after installing the packages, you still can't run AM2R, use `ldd` in order to find out which packages are missing. If that happens, or you have other questions/issues, please file an issue, or ask in either [r/AM2R](https://www.reddit.com/r/AM2R/) or the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).
+
+## Android installation instructions
+You will need an Android device with a file explorer application installed, and a USB cable to connect said device to your computer.
+
+1. Enable installation of apps from third party sources on your Android device. The location of this setting varies from device to device; my phone has it under the Security Settings, but some may place it under Application Settings.
+The option is usually called "Unknown Sources" and may need to be searched for.
+1. Connect your phone to your computer with the USB cable. Select "Media Transfer" on the popup window displayed on your Android device.
+1. Mount your phone (either via a file manager or via a terminal), and and go to where it's mounted
+Move `AndroidM2R_1X_X-signed.apk` to a location such as the Downloads folder of the Android device.
+1. Disconnect the Android device, and open the device's file explorer app. Locate and open `AndroidM2R_1X_X-signed.apk`.
+This should prompt you to install the application; after this point it should behave like any other app.
