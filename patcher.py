@@ -181,29 +181,22 @@ elif (type == '2'):
     os.chdir('utilities/android')
 
     print("\nPackaging APK.")
-
-    # General assets
-    for file4 in glob.glob("assets/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file4])
-
-    # Language files
-    for file5 in glob.glob("assets/lang/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file5])
-
-    # Headers
-    for file6 in glob.glob("assets/lang/headers/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file6])
-
-    # Fonts
-    for file7 in glob.glob("assets/lang/fonts/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file7])
-
-    print("\nSigning APK... If Java JDK 8 or newer is not present, this will fail!")
+    
+    print("If Java JDK 8 or newer is not present, this will fail!")
+    #decompile the apk
+    subprocess.call(["java", "-jar", "./apktool.jar", "d", "-f", "AM2RWrapper.apk"])
+    #copy
+    subprocess.call(["cp", "-r", "assets", "AM2RWrapper"])
+    #build
+    subprocess.call(["java", "-jar", "./apktool.jar", "b", "AM2RWrapper", "-o", "AM2RWrapper.apk"])
+    
+    print("\nSigning APK...")
     subprocess.call(['java', '-jar', 'uber-apk-signer.jar', '-a', 'AM2RWrapper.apk'])
     # Cleanup
     remove('AM2RWrapper.apk')
     rmtree('assets')
     rmtree('../../'+output)
+    rmtree('AM2RWrapper')
     # Move APK
     move('AM2RWrapper-aligned-debugSigned.apk', '../../AndroidM2R_'+version+'-signed.apk')
 
