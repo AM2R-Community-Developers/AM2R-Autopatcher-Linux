@@ -61,7 +61,7 @@ else:
     if os.path.isdir('AM2R_11'):
         print("AM2R_11 found! Copying to " + output)
     else:
-        print("AM2R_11 not found. Place AM2R_11.zip in this folder and try again.")
+        print("AM2R_11 not found. Place AM2R_11.zip (case sensitive) in this folder and try again.")
         quit()
 
 print("\nSelect your patch type:\n\n1 - Linux\n2 - Android\n\nAwaiting input:\n")
@@ -247,8 +247,8 @@ else:
     desktopFile.write(fileContents)
     #make the desktopFile executable. For some reason, this is not necessary, when copying it into /applications
     subprocess.call(["chmod", "+x", desktopFilePath])
+    print("Desktop file has been created!")
 
-print("Desktop file has been created!")
 
 
 print("\nThe operation was completed successfully. See you next mission!")

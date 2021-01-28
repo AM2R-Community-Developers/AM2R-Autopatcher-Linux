@@ -1,70 +1,42 @@
 # AM2R Autopatcher for Linux
+This utility patches the official AM2R 1.1 release (Windows) to the fan-made Community Update (Linux).
 
-## Known dependencies
-> Please note that, depending on your operating system, you may require different dependencies. The following list is targeted at Debian-based systems, and is not guaranteed to be exhaustive. `ldd` is your friend.
+## Dependencies
+The patcher and the installer require several dependencies depending on the distro you are currently using.
+As is always the case on Linux, please make sure that your packages and your package list are up-to-date.
 
-Patching to Linux:
-- Python 3
-- xdelta3 (Ubuntu package)
+### Arch (including Manjaro, EndeavourOS, RebornOS etc.)
+Make sure that multilib is enabled, as Arch does not do so by default and this is a 32-bit application.
+To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that both this and the next line are uncommented:
+`sudo pacman -S --needed python xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
-Patching to Android:
-- Python 3
-- xdelta3 (Ubuntu package)
-- AAPT
-- Java JDK 8
+### Debian (including Ubuntu, Mint, PopOS, etc)
+`sudo apt install python xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl3:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386 jstest-gtk joystick` 
 
-AM2R:
-- libc6:i386
-- libstdc++-6-dev:i386
-- zlib1g-dev:i386
-- libxxf86vm1:i386
-- libgl1-mesa-glx:i386
-- libcurl3:i386
-- libopenal1:i386
-- libxrandr2:i386
-- libglu1:i386
-- libidn11:i386
-- libssl1.0.0:i386
+### Fedora
+`sudo dnf install python xdelta openal-soft compat-openssl10`
 
-Controller support:
-- jstest-gtk
-- joystick
 
-To patch your copy of AM2R v1.1, place the `AM2R_11.zip` folder in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via Python 3.
+## Linux patching process
+To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.
 
-The guided script should walk you through the rest of the patching process. Be sure to flag AM2R as an executable before attempting to launch it. If nothing happens, you're likely missing dependencies; `ldd` is your friend.
+## Android patching process
+In addition to the above packages, two more dependencies are required for Android support: AAPT and at Java JDK 8. AAPT is part of the Android SDK and is rarely found in package managers. Your best option would be to use Android Studio in order to install the SDK, or use the binary provided [here](https://androidaapt.com/) and place it somewhere recognizable by path (Either make an alias for it, or place it i.e. to /usr/local/bin).
 
-**NOTE:** To launch AM2R, you may need to preload `libcurl.so.3`.
+## After patching
+Navigate to the newly created folder. After that, if you want to launch AM2R via command line, make sure to do it like this: `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.  
+However, there is also a .desktop file included (this one has the AM2R logo). You can just double click on that in order to start the game.
 
-```bash
-env "LD_PRELOAD=libcurl.so.3" ./AM2R
-```
-
-Questions/issues regarding the patching process or AM2R in general should be forwarded to [r/AM2R](https://www.reddit.com/r/AM2R/) or the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).
-
-## Post-patch Arch Linux setup instructions (courtesy of u/Genex_04)
-
-1. Enable the multilib repo by editing `/etc/pacman.conf` as root and uncomment the two multilib repository lines (remove the `#` in front of these lines in the file)
-    ```
-    [multilib]
-    Include = /etc/pacman.d/mirrorlist-arch
-    ```
-1. Run `pacman -Sy` to synchronize the repository.
-1. Locate your AM2R executable and run `ldd AM2R`; this will show you the missing dependencies
-    1. For each missing dependency, run `pacman -Fy <library name>`. This will tell you which package contains that library.
-    1. You then need to install that package in the multilib repository. For example, the `libcrypto.so.1.0.0` library would require you to install `multilib/lib32-openssl-1.0 1.0.2.u-1`
-1. Once all the libraries are installed, you can launch AM2R with `env "LD_PRELOAD=libcurl.20.3" ./AM2R`
-
-**OPTIONAL:** You can make a simple script with `env "LD_PRELOAD=libcurl.so.3" ./AM2R` inside and make it executable so you don't have to type the full command every time.
+If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing. If you still cannot resolve the missing dependencies, or you have other questions/issues, please open an issue, post to [r/AM2R](https://www.reddit.com/r/AM2R/), or join the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).
+As a last resort, you can always play the Windows version on Linux via Wine or Proton.
 
 ## Android installation instructions
-
 You will need an Android device with a file explorer application installed, and a USB cable to connect said device to your computer.
 
-1. Enable installation of apps from third party sources on your Android device. The location of this setting varies from device to device; my phone has it under the Security Settings, but some may place it under Application Settings.
-The option is usually called "Unknown Sources" and may be searched for.
-1. Connect your phone to your computer with the USB cable. Select "Media Transfer" on the popup window displayed on your Android device.
-1. Go to "This PC" on your computer's file explorer and open the Android device folder that shows up.
-Move `AndroidM2R_15_2-signed.apk` to a location such as the Downloads folder of the Android device.
-1. Disconnect the Android device, and open the device's file explorer app. Locate and open `AndroidM2R_15_2-signed.apk`.
+1. Enable installation of apps from third party sources on your Android device. The location of this setting varies from device to device; our example device has it under the Security Settings, but some may place it under Application Settings or another location.
+The option is usually called "Unknown Sources" and may need to be searched for.
+2. Connect your phone to your computer with the USB cable. Select "Media Transfer" on the popup window displayed on your Android device.
+3. Mount your phone (either via a file manager or via a terminal), and go to where it's mounted.
+Move `AndroidM2R_1X_X-signed.apk` to a location such as the Downloads folder of the Android device.
+4. Disconnect the Android device, and open the device's file explorer app. Locate and open `AndroidM2R_1X_X-signed.apk`.
 This should prompt you to install the application; after this point it should behave like any other app.
