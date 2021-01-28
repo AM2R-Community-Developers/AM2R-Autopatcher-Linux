@@ -5,12 +5,12 @@ This utility patches the official AM2R 1.1 release (Windows) to the fan-made Com
 The patcher and the installer require several dependencies depending on the distro you are currently using.
 As is always the case on Linux, please make sure that your packages and your package list are up-to-date.
 
-### Arch (including Manjaro, EndeavourOS, RebornOS etc.)
-Make sure that multilib is enabled, as Arch does not do so by default and this is a 32-bit application.
-To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that both this and the next line are uncommented:
+### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
+Make sure that multilib is enabled, as this is a 32-bit application and Arch does not do so by default.
+To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that both this and the next line are uncommented:  
 `sudo pacman -S --needed python xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
-### Debian (including Ubuntu, Mint, PopOS, etc)
+### Debian (including Ubuntu, Mint, PopOS, etc.)
 `sudo apt install python xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl3:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386 jstest-gtk joystick` 
 
 ### Fedora
