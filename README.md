@@ -7,7 +7,7 @@ As is always the case on Linux, please make sure that your packages and your pac
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
 Make sure that multilib is enabled, as this is a 32-bit application and Arch does not do so by default.
-To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that both this and the next line are uncommented:  
+To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that both this and the next line are uncommented. After that, install the following packages:  
 `sudo pacman -S --needed python xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
@@ -21,7 +21,8 @@ To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure t
 To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.
 
 ## Android patching process
-In addition to the above packages, two more dependencies are required for Android support: AAPT and at Java JDK 8. AAPT is part of the Android SDK and is rarely found in package managers. Your best option would be to use Android Studio in order to install the SDK, or use the binary provided [here](https://androidaapt.com/) and place it somewhere recognizable by path (Either make an alias for it, or place it i.e. to /usr/local/bin).
+In addition to the above packages, you need to have at least Java JDK 8 installed although this should be preinstalled on most systems. If it isn't, search your local package manager for `openjdk-`.  
+Make sure you have it installed, and then follow the linux patching instructions, but choose the Android option instead.
 
 ## After patching
 Navigate to the newly created folder. After that, if you want to launch AM2R via command line, make sure to do it like this: `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.  
