@@ -9,6 +9,7 @@ version = '15_2'
 
 output = 'am2r_' + version
 
+
 # Thanks, stackoverflow
 def _find_getch():
     try:
@@ -211,4 +212,24 @@ else:
     print("Invalid input. Exiting.")
     quit()
 
+#creating the desktop file
+cwd = os.getcwd()
+print("Creating .desktop File now...")
+desktopFilePath = output+"/AM2R.desktop"
+copy("DesktopTemplate", desktopFilePath)
+desktopFile = open(desktopFilePath, 'r+')
+fileContents = desktopFile.read()
+fileContents = fileContents.replace("[REPLACE]", cwd+'/'+output)
+desktopFile.seek(0)
+desktopFile.write(fileContents)
+
+#make the desktopFile and game executable
+subprocess.call(["chmod", "+x", desktopFilePath])
+subprocess.call(["chmod", "+x", output+"/AM2R"])
+print("Desktop file has been created!")
+
+
 print("\nThe operation was completed successfully. See you next mission!")
+
+
+
