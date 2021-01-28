@@ -247,8 +247,8 @@ else:
     desktopFile.write(fileContents)
     #make the desktopFile executable. For some reason, this is not necessary, when copying it into /applications
     subprocess.call(["chmod", "+x", desktopFilePath])
-    print("Desktop file has been created!")
 
+print("Desktop file has been created!")
 
 
 print("\nThe operation was completed successfully. See you next mission!")
