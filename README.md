@@ -16,7 +16,6 @@ To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure t
 ### Fedora
 `sudo dnf install python xdelta openal-soft compat-openssl10`
 
-
 ## Linux patching process
 To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.
 
@@ -41,3 +40,9 @@ The option is usually called "Unknown Sources" and may need to be searched for.
 Move `AndroidM2R_1X_X-signed.apk` to a location such as the Downloads folder of the Android device.
 4. Disconnect the Android device, and open the device's file explorer app. Locate and open `AndroidM2R_1X_X-signed.apk`.
 This should prompt you to install the application; after this point it should behave like any other app.
+
+If for some reason, you are not able to access your phone, you can use the adb (android-debug-bridge) instead:
+1. On your phone, make sure, that developer options are enabled. If they aren't move to the `About Phone` section, search for your build number, and click on it 7 times.
+2. Plug in your phone via a USB-cable, go to the developer settings, enable the `USB Debugging` option and trust your Computer.
+3. Install the adb package. The name is different from distro to distro, so search your local package manager for `adb` or `android-tools`.
+4. Open a terminal and type `adb devices`. This should show your phone. If it does, type `adb install [path-to-apk]`.
