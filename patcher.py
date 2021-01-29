@@ -129,6 +129,42 @@ if (type == '1'):
     # icons
     copy('patch_data/files_to_copy/icon.png', output+'/assets')
     copy('patch_data/files_to_copy/splash.png', output+'/assets')
+    
+    #make game executable
+    subprocess.call(["chmod", "+x", output+"/AM2R"])
+
+    print("Do you want to install AM2R systemwide?\n\n[y/n]\n")
+    inp = getch()
+
+    if( inp == 'y'):
+        #install it to /usr/local/bin
+        #couldn't figure it out, how to do it with a normal cp command, so I just copy everything manually
+        #except for /assets
+        for file8 in glob.glob(output + "/*"):
+            if("assets" in file8):
+                continue
+            subprocess.call(["sudo", "cp", file8 , "/usr/local/bin/am2r/"])
+        subprocess.call(["sudo", "cp", "-r", output+"/assets/" , "/usr/local/bin/am2r/"])
+        template = open("DesktopTemplate", "r")
+        fileContents = template.read()
+        fileContents = fileContents.replace("[REPLACE]", "/usr/local/bin/am2r")
+        desktopFile = open(output+"/AM2R.desktop", "w+")
+        desktopFile.seek(0)
+        desktopFile.write(fileContents)
+        subprocess.call(["sudo", "mv", output+"/AM2R.desktop", "/usr/share/applications/AM2R.desktop"])
+        #we could chmod ./AM2R in the install folder, but it's not really necessary
+    else:
+        #creating the desktop file for local
+        cwd = os.getcwd()
+        desktopFilePath = output+"/AM2R.desktop"
+        copy("DesktopTemplate", desktopFilePath)
+        desktopFile = open(desktopFilePath, 'r+')
+        fileContents = desktopFile.read()
+        fileContents = fileContents.replace("[REPLACE]", cwd+'/'+output)
+        desktopFile.seek(0)
+        desktopFile.write(fileContents)
+        #make the desktopFile executable. For some reason, this is not necessary, when copying it into /applications
+        subprocess.call(["chmod", "+x", desktopFilePath])
 
 
 elif (type == '2'):
@@ -182,71 +218,27 @@ elif (type == '2'):
     os.chdir('utilities/android')
 
     print("\nPackaging APK.")
-
-    # General assets
-    for file4 in glob.glob("assets/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file4])
-
-    # Language files
-    for file5 in glob.glob("assets/lang/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file5])
-
-    # Headers
-    for file6 in glob.glob("assets/lang/headers/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file6])
-
-    # Fonts
-    for file7 in glob.glob("assets/lang/fonts/*.*"):
-        subprocess.call(['aapt', 'add', '-f', '-v', 'AM2RWrapper.apk', file7])
-
-    print("\nSigning APK... If Java JDK 8 or newer is not present, this will fail!")
+    print("If Java JDK 8 or newer is not present, this will fail!")
+    #decompile the apk
+    subprocess.call(["java", "-jar", "./apktool.jar", "d", "-f", "AM2RWrapper.apk"])
+    #copy
+    subprocess.call(["cp", "-r", "assets", "AM2RWrapper"])
+    #build
+    subprocess.call(["java", "-jar", "./apktool.jar", "b", "AM2RWrapper", "-o", "AM2RWrapper.apk"])
+        
+    print("\nSigning APK...")
     subprocess.call(['java', '-jar', 'uber-apk-signer.jar', '-a', 'AM2RWrapper.apk'])
     # Cleanup
     remove('AM2RWrapper.apk')
     rmtree('assets')
     rmtree('../../'+output)
+    rmtree('AM2RWrapper')
     # Move APK
     move('AM2RWrapper-aligned-debugSigned.apk', '../../AndroidM2R_'+version+'-signed.apk')
 
 else:
     print("Invalid input. Exiting.")
     quit()
-
-#make game executable
-subprocess.call(["chmod", "+x", output+"/AM2R"])
-
-print("Do you want to install AM2R systemwide?\n\n[y/n]\n")
-inp = getch()
-
-if( inp == 'y'):
-    #install it to /usr/local/bin
-    #couldn't figure it out, how to do it with a normal cp command, so I just copy everything manually
-    #except for /assets
-    for file8 in glob.glob(output + "/*"):
-        if("assets" in file8):
-            continue
-        subprocess.call(["sudo", "cp", file8 , "/usr/local/bin/am2r/"])
-    subprocess.call(["sudo", "cp", "-r", output+"/assets/" , "/usr/local/bin/am2r/"])
-    template = open("DesktopTemplate", "r")
-    fileContents = template.read()
-    fileContents = fileContents.replace("[REPLACE]", "/usr/local/bin/am2r")
-    desktopFile = open(output+"/AM2R.desktop", "w+")
-    desktopFile.seek(0)
-    desktopFile.write(fileContents)
-    subprocess.call(["sudo", "mv", output+"/AM2R.desktop", "/usr/share/applications/AM2R.desktop"])
-    #we could chmod ./AM2R, but it's not really necessary
-else:
-    #creating the desktop file for local
-    cwd = os.getcwd()
-    desktopFilePath = output+"/AM2R.desktop"
-    copy("DesktopTemplate", desktopFilePath)
-    desktopFile = open(desktopFilePath, 'r+')
-    fileContents = desktopFile.read()
-    fileContents = fileContents.replace("[REPLACE]", cwd+'/'+output)
-    desktopFile.seek(0)
-    desktopFile.write(fileContents)
-    #make the desktopFile executable. For some reason, this is not necessary, when copying it into /applications
-    subprocess.call(["chmod", "+x", desktopFilePath])
 
 print("Desktop file has been created!")
 
