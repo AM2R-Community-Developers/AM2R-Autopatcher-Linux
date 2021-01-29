@@ -30,8 +30,7 @@ Make sure you have it installed, and then follow the linux patching instructions
 Navigate to the newly created folder. After that, if you want to launch AM2R via command line, make sure to do it like this: `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.  
 However, there is also a .desktop file included (this one has the AM2R logo). You can just double click on that in order to start the game.
 
-If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing. If you still cannot resolve the missing dependencies, or you have other questions/issues, please open an issue, post to [r/AM2R](https://www.reddit.com/r/AM2R/), or join the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).
-
+If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing. If you still cannot resolve the missing dependencies, or you have other questions/issues, please open an issue, post to [r/AM2R](https://www.reddit.com/r/AM2R/), or join the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).  
 As a last resort, you can always play the Windows version on Linux via Wine or Proton.
 
 ## Android installation instructions
