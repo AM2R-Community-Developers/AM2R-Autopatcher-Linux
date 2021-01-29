@@ -11,9 +11,9 @@ To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure t
 `sudo pacman -S --needed python xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-`sudo apt install python xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl3:i386 libssl1.0:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386`__
+`sudo apt install python xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl3:i386 libssl1.0:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386`  
 
-On newer versions (Debian 10+ or Ubuntu 18+) you may have to do the below command instead. Please make sure first, that you neither have `libcurl3` nor `libcurl4` installed.__
+On newer versions (Debian 10+ or Ubuntu 18+) you may have to do the below command instead. Please make sure first, that you neither have `libcurl3` nor `libcurl4` installed.  
 `sudo apt install python python3 xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libxrandr2:i386 libglu1:i386 && http://archive.ubuntu.com/ubuntu/pool/universe/c/curl3/libcurl3_7.58.0-2ubuntu2_i386.deb && sudo dpkg -i libcurl3_7.58.0-2ubuntu2_i386.deb && wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.5_i386.deb && sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.5_i386.deb && rm libssl1.0.0_1.0.2n-1ubuntu5.5_i386.deb libcurl3_7.58.0-2ubuntu2_i386.deb`
 
 ### Fedora
