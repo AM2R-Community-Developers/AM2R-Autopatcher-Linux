@@ -138,13 +138,16 @@ if (type == '1'):
 
     if( inp == 'y'):
         #install it to /usr/local/bin
+        
+        #first, create the folder in case it's not there
+        subprocess.call(["sudo", "mkdir", "-p" "/usr/local/bin/am2r/"])
         #couldn't figure it out, how to do it with a normal cp command, so I just copy everything manually
         #except for /assets
         for file8 in glob.glob(output + "/*"):
             if("assets" in file8):
                 continue
-            subprocess.call(["sudo", "cp", file8 , "/usr/local/bin/am2r/"])
-        subprocess.call(["sudo", "cp", "-r", output+"/assets/" , "/usr/local/bin/am2r/"])
+            subprocess.call(["sudo", "cp", "-p", file8 , "/usr/local/bin/am2r/"])
+        subprocess.call(["sudo", "cp", "-rp", output+"/assets/" , "/usr/local/bin/am2r/"])
         template = open("DesktopTemplate", "r")
         fileContents = template.read()
         fileContents = fileContents.replace("[REPLACE]", "/usr/local/bin/am2r")
