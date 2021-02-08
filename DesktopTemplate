@@ -2,7 +2,7 @@
 Categories=Game
 Comment=Another Metroid 2 Remake (Community Edition)
 Exec=[REPLACE]/AM2R.AppImage
-Icon=[REPLACE]/assets/icon.png
+Icon=[REPLACE]/icon.png
 Name=AM2R
 Terminal=false
 Type=Application
