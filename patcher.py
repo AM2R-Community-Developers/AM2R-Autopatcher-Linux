@@ -44,6 +44,9 @@ if os.path.isdir('utilities/android/assets'):
 if os.path.isdir(output):
     rmtree(output)
 
+if os.path.isdir('AM2R.AppDir'):
+    rmtree('AM2R.AppDir')
+
 print("-------------------------------------------\n\nAM2R 1.5.1 Python Autopatching Utility\nScripted by Lojemiru\n\n-------------------------------------------\n")
 
 # Check for AM2R_11.zip...
@@ -133,7 +136,15 @@ if (type == '1'):
     #make game executable
     subprocess.call(["chmod", "+x", output+"/AM2R"])
 
-    print("Do you want to install AM2R systemwide?\n\n[y/n]\n")
+    #create AppImage
+    copytree("patch_data/AM2R.AppDir", "AM2R.AppDir")
+    subprocess.call(["cp", "-rp", output , "AM2R.AppDir/usr/bin"])
+    subprocess.call(["sh", "./AppImageCreation.sh"])
+    
+    
+
+
+    print("\nDo you want to install AM2R systemwide?\n\n[y/n]\n")
     inp = getch()
 
     if( inp == 'y'):
