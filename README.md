@@ -5,7 +5,7 @@ This utility patches the official AM2R 1.1 release (Windows) to the fan-made Com
 The patcher and the installer only require a small amount of dependencies:
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
-`sudo pacman -S --needed python xdelta3 jre8-openjdk`
+`sudo pacman -S --needed python xdelta3 jre8-openjdk lib32-libpulse`
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
 `sudo apt install python xdelta3 openjdk-8-jre`
