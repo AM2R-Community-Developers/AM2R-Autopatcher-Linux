@@ -5,7 +5,16 @@ This utility patches the official AM2R 1.1 release (Windows) to the fan-made Com
 The patcher and the installer only require a small amount of dependencies:
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
-`sudo pacman -S --needed python xdelta3 jre8-openjdk lib32-libpulse`
+Make sure that multilib is enabled, as `lib32-libpulse` is a 32-bit library, and Arch does not enable 32-bit support by default.  
+To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that the next two lines are uncommented:
+```
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+```
+
+Then install the following dependencies:  
+`sudo pacman -S --needed python xdelta3 jre8-openjdk lib32-libpulse`  
+
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
 `sudo apt install python xdelta3 openjdk-8-jre`
