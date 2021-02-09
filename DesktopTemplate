@@ -1,8 +1,8 @@
 [Desktop Entry]
 Categories=Game
 Comment=Another Metroid 2 Remake (Community Edition)
-Exec=env "LD_PRELOAD=libcurl.so.3" [REPLACE]/AM2R
-Icon=[REPLACE]/assets/icon.png
+Exec=[REPLACE]/AM2R.AppImage
+Icon=[REPLACE]/icon.png
 Name=AM2R
 Terminal=false
 Type=Application

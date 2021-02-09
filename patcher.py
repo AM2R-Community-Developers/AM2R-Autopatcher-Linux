@@ -44,6 +44,12 @@ if os.path.isdir('utilities/android/assets'):
 if os.path.isdir(output):
     rmtree(output)
 
+if os.path.isdir("ARCHIVE-"+output):
+    rmtree("ARCHIVE-"+output)
+
+if os.path.isdir('AM2R.AppDir'):
+    rmtree('AM2R.AppDir')
+
 print("-------------------------------------------\n\nAM2R 1.5.1 Python Autopatching Utility\nScripted by Lojemiru\n\n-------------------------------------------\n")
 
 # Check for AM2R_11.zip...
@@ -133,21 +139,33 @@ if (type == '1'):
     #make game executable
     subprocess.call(["chmod", "+x", output+"/AM2R"])
 
-    print("Do you want to install AM2R systemwide?\n\n[y/n]\n")
+    #create AppImage
+    print("Creating Appimage...")
+    copytree("patch_data/AM2R.AppDir", "AM2R.AppDir")
+    subprocess.call(["cp", "-rpT", output , "AM2R.AppDir/usr/bin"])
+    retcode = os.system("./AppImageCreation.sh AM2R.AppDir &> /dev/null")
+    rename("AM2R-x86_64.AppImage", "AM2R.AppImage")
+    rmtree("AM2R.AppDir")
+    
+    #rename the output to archive, so we only have a new folder, containing the appimage and a desktop file for it
+    rename(output, "ARCHIVE-"+output)
+    mkdir(output)
+    move("AM2R.AppImage", output+"/AM2R.AppImage")
+    copy("patch_data/files_to_copy/icon.png", output+"/icon.png")
+    
+    print("\nDo you want to install AM2R systemwide?\n\n[y/n]\n")
     inp = getch()
 
     if( inp == 'y'):
         #install it to /usr/local/bin
         
         #first, create the folder in case it's not there
-        subprocess.call(["sudo", "mkdir", "-p" "/usr/local/bin/am2r/"])
+        subprocess.call(["sudo", "mkdir", "-p", "/usr/local/bin/am2r/"])
         #couldn't figure it out, how to do it with a normal cp command, so I just copy everything manually
         #except for /assets
         for file8 in glob.glob(output + "/*"):
-            if("assets" in file8):
-                continue
             subprocess.call(["sudo", "cp", "-p", file8 , "/usr/local/bin/am2r/"])
-        subprocess.call(["sudo", "cp", "-rp", output+"/assets/" , "/usr/local/bin/am2r/"])
+        #subprocess.call(["sudo", "cp", "-rp", output+"/assets/" , "/usr/local/bin/am2r/"])
         template = open("DesktopTemplate", "r")
         fileContents = template.read()
         fileContents = fileContents.replace("[REPLACE]", "/usr/local/bin/am2r")
@@ -163,11 +181,13 @@ if (type == '1'):
         copy("DesktopTemplate", desktopFilePath)
         desktopFile = open(desktopFilePath, 'r+')
         fileContents = desktopFile.read()
-        fileContents = fileContents.replace("[REPLACE]", cwd+'/'+output)
+        fileContents = fileContents.replace("[REPLACE]", cwd+"/"+output)
         desktopFile.seek(0)
         desktopFile.write(fileContents)
         #make the desktopFile executable. For some reason, this is not necessary, when copying it into /applications
         subprocess.call(["chmod", "+x", desktopFilePath])
+
+        
 
 
 elif (type == '2'):
