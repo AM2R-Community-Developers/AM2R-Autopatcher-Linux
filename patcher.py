@@ -101,9 +101,13 @@ if (type == '1'):
 
     # install new datafiles...
     print("\nInstalling new datafiles...")
-    # music
-    for file2 in glob.glob("patch_data/files_to_copy/*.ogg"):
-        copy(file2, output+'/assets')
+    
+    # copy the whole files_to_copy folder over
+    for file2 in glob.glob("patch_data/files_to_copy/*"):
+        if (os.path.isdir(file2)):
+            copytree(file2, output+"/assets/"+os.path.basename(file2))
+        else:
+            copy(file2, output+'/assets')
 
     print("\nInstall high quality in-game music? Increases filesize by 194 MB!\n\n[y/n]\n")
 
@@ -123,18 +127,6 @@ if (type == '1'):
 
     # remove old lang
     rmtree(output+'/lang')
-    # install new lang
-    copytree('patch_data/files_to_copy/lang', output+'/assets/lang')
-    # install mods,
-    copytree('patch_data/files_to_copy/mods', output+'/assets/mods')
-    # text
-    for file3 in glob.glob("patch_data/files_to_copy/*.txt"):
-        copy(file3, output+'/assets')
-    # modifiers
-    copy('patch_data/files_to_copy/modifiers.ini', output+'/assets')
-    # icons
-    copy('patch_data/files_to_copy/icon.png', output+'/assets')
-    copy('patch_data/files_to_copy/splash.png', output+'/assets')
     
     #make game executable
     subprocess.call(["chmod", "+x", output+"/AM2R"])
