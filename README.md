@@ -20,7 +20,7 @@ On newer versions (Debian 10+ or Ubuntu 18+) you may have to do the below comman
 `sudo dnf install python xdelta openal-soft compat-openssl10`
 
 ## Linux patching process
-To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.sh`. After installing the required dependencies for the version you would like to patch to, execute `patcher.sh` via `./patcher.py`.
+To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.sh`. After installing the required dependencies for the version you would like to patch to, execute `patcher.sh` via `./patcher.sh`.
 
 ## Android patching process
 In addition to the above packages, you need to have at least Java JDK 8 installed although this should be preinstalled on most systems. If it isn't, search your local package manager for `openjdk-`.  
