@@ -135,7 +135,11 @@ if (type == '1'):
     print("Creating Appimage...")
     copytree("patch_data/AM2R.AppDir", "AM2R.AppDir")
     subprocess.call(["cp", "-rpT", output , "AM2R.AppDir/usr/bin"])
-    retcode = os.system("./AppImageCreation.sh AM2R.AppDir &> /dev/null")
+    fd = os.open("/dev/null", os.O_WRONLY)
+    savefd = os.dup(2)
+    os.dup2(fd,2)
+    subprocess.call(["sh", "./AppImageCreation.sh", "-n"])
+    os.dup2(savefd,2)
     rename("AM2R-x86_64.AppImage", "AM2R.AppImage")
     rmtree("AM2R.AppDir")
     
