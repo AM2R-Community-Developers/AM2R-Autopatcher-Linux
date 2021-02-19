@@ -242,6 +242,7 @@ elif (type == '2'):
     subprocess.call(["java", "-jar", "./apktool.jar", "d", "-f", "AM2RWrapper.apk"])
     #copy
     subprocess.call(["cp", "-r", "assets", "AM2RWrapper"])
+    subprocess.call(["cp", "-f", "../../patch_data/android/apktool.yml", "AM2RWrapper/apktool.yml"])
     #build
     subprocess.call(["java", "-jar", "./apktool.jar", "b", "AM2RWrapper", "-o", "AM2RWrapper.apk"])
         
