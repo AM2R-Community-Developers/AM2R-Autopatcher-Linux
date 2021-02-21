@@ -17,7 +17,15 @@ Then install the following dependencies:
 
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-`sudo apt install python xdelta3 openjdk-8-jre`
+Make sure that the i386 architecture is enabled for you, as libopenal1 requires the 32-bit version, and Ubuntu does not enable 32-bit support by default.  
+To enable it, do the following:
+```
+sudo dpkg --add-architecture i386
+sudo apt update && sudo apt install libc6:i386 libncurses5:i386 libstdc++6:i386
+```
+
+Then install the following dependencies:  
+`sudo apt install python xdelta3 openjdk-8-jre libopenal1:i386`
 
 ### Red Hat (including Fedora)
 `sudo yum python xdelta java-1.8.0-openjdk`
