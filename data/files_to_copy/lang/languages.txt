@@ -1,0 +1,9 @@
+english.ini
+french.ini
+germanwide.ini
+german.ini
+czech.ini
+spanish.ini
+japanese.ini
+italian.ini
+russian.ini

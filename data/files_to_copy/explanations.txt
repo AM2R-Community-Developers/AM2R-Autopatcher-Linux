@@ -1,0 +1,99 @@
+
+--EXPLANATION OF FEATURES--
+
+-Changelog - Check out Readme.txt for all the changes since v1.0.
+
+Game modes:
+-New Game+ and Random Game+ game modes must be unlocked first before you can play them.
+	-To unlock: Beat Normal Game in less than 4 hours on either Normal or Hard difficulty.
+-New Game+:
+	- Local Metroid counter is set to 38. From game start you have access through area 5 (Distribution Center).
+	- Bomb Blocks between Area 1 and Area 2 have been removed.
+-Random Game+:
+	- New Game+ rules apply. 
+	- Bomb Jumping and Wall Jumping can and probably will be critical to know for random modes.
+	- First Super Missile and Power Bomb location are guaranteed.
+	- Bombs blocks between area one and area two in the main cavern will be cleared.
+		- In Classic Modes this not be the case.
+	- You can acquire one of the items in area 2 (Hydro Station Breeding Grounds) without the speed booster. Speed Booster can be located here.
+	- Some passages have been cleared for you, or Septoggs will help, if you do not have the required items/power ups to proceed. 
+	- If you think you're stuck, or will get stuck, try and proceed.
+		- Remember that Speed Booster can help you get to places you normally cannot climb or jump to.
+	- It is possible to get stuck if you do not have Bombs. Power Bombs do run out and bomb blocks will still reappear.
+	- You will get Power Bomb pickups in random games if you have not acquired Bombs yet.
+
+	
+	- Classic Mode:
+		- Power-ups Only:
+			-Only Power-ups are randomized. You are guaranteed Bombs in area 1.
+			- There are settings in modifiers.ini file that you can change in regards to random games.
+		- Starting Paths:
+			- All items are randomized. All power-ups are randomized. They are in separate randomized pools. Items and power-ups do not mix together.
+			- Power Bombs will not be randomized in area 1 if Power Bombs or Screw Attack is your starting path.
+			- Bombs will not be in area 1 if Screw Attack or Power Bombs is your starting path.
+			- Bomb starting path is the easiest. Power Bombs starting path is medium difficulty. Screw Attack starting path is the hardest.
+			- There are settings in modifiers.ini file that you can change in regards to random games.
+	- Split Random:
+		- Has two randomized pools like Classic Mode. Items and power-ups do not mix together.
+		- Power-ups pool is completely random. There is no guarantee of any power up placement.
+	- AM2Random:
+		- Power-ups and items are fully randomized together.
+
+
+
+Misc Settings:
+- Fusion Difficulty
+	- Unlockable by beating the game with 100% item pickup.
+	- Samus is wearing the Fusion suit.
+	- Twice the difficulty of Hard.
+	- X Parasites are source of ammo and health for organic enemies.
+- 8-bit Color Filters - F9 toggles filter.
+- Charge Beam can now damage Metroids if you have depleted all Missiles and Super Missiles.
+
+
+Modifiers.ini file:
+-Below is not a comprehensive list of what all resides in said file.
+-Various difficulty modifiers:
+	-Depleted E-Tanks - You may change how much energy E-Tanks hold in modifiers.ini.
+	-You may start with 0 through 30 missiles on game start.
+	-You can change damage taken from plants and lava.
+-Randomizer seed set - You may manually set the randomizer seed in modifiers.ini.
+-Boss and some enemy health - You may manually set the health of bosses in modifiers.ini. You may only increase their health.
+-Boss and some enemy damage dealt - You may manually set the damage you receive from bosses in modifiers.ini. You may only increase this damage.
+
+
+
+Color Palettes:
+-Color Palettes for Samus' suit:
+	In the "mods\palettes" folder you will find folders for Samus and the Metroids containing palette files. For Samus, one for Power Suit, one for Varia Suit, one for Gravity suit, and one for each Fusion Suit variant.
+	With all suit palettes:
+		There are two 1 pixel wide columns of colors. The first column holds the base colors. Do not modify it.
+		The second column can be modified. If you change a color in the second column, you will change Samus' suit color.
+		This works by referencing the first column color and changing the color of Samus' suit to the color in the second column.
+Samus Suit Palette names:
+	palettepower.png
+	palettevaria.png
+	palettegravity.png
+	palettefusion.png
+Metroid Palettes:
+	- These work the same way as the suit palettes.
+Metroid Palette Names:
+	AlphaPalette.png
+	GammaPalette.png
+	ZetaPalette.png
+	OmegaPalette.png
+	QueenPalette.png
+
+
+
+--How do I use external font files?--
+
+AM2R uses five different fonts; raw .ttf font files of the exact fonts used in AM2R have been included 
+in the 'fonts' folder of the language folder of AM2R. Two of these fonts (Glasstown NBP and uni 05_53)
+include nearly a thousand new glyphs that allow AM2R to be translated into many non-Latin languages,
+particularly for log messages and various descriptions. The other three fonts (mainly used for GUI elements
+and titles) do not include as many glyphs but these font files can also be updated to include more characters;
+this will not be described here in detail, but the recommended process is to create the new letters
+in BitFontMaker2 and add the letters to the included .ttf files with FontForge, both are free software.
+
+

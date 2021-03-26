@@ -1,0 +1,9 @@
+[Desktop Entry]
+Categories=Game
+Comment=Another Metroid 2 Remake (Community Edition)
+Exec=[REPLACE]/AM2R.AppImage
+Icon=[REPLACE]/icon.png
+Name=AM2R
+Terminal=false
+Type=Application
+Version=1.0" 
