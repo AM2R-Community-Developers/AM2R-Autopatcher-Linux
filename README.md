@@ -82,3 +82,4 @@ On newer versions (Debian 10+ or Ubuntu 18+) you may have to do the below comman
 If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing.  
 After patching, if you want to launch AM2R via command line, make sure to do it like this: `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.  
 However, there is also a .desktop file with the above command included (this one has the AM2R logo). You can just double click on that in order to start the game.
+ 
