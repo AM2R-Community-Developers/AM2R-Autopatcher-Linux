@@ -33,6 +33,11 @@ Then install the following dependencies:
 ### Suse
 `sudo zypper python xdelta3 java-1_8_0-openjdk`
 
+## Controllers
+In order to be able to use a controller, you *need* the two following packages as well:
+- jstest-gtk
+- joystick
+
 ## Linux and Android patching process
 To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.  
 During the installation you will be asked, if you want to patch it for Linux or Android. Press the corresponding number for that.
