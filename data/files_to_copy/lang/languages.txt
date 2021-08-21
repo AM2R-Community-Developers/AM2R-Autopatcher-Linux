@@ -7,3 +7,7 @@ spanish.ini
 japanese.ini
 italian.ini
 russian.ini
+portuguese-br.ini
+portuguese-pt.ini
+ukrainian.ini
+swedish.ini
