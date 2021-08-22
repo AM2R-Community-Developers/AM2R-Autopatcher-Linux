@@ -1,5 +1,5 @@
 PROJECT AM2R
-v1.5.3
+v1.5.4
 
 bit.ly/AM2Rblog
 reddit.com/r/AM2R
@@ -75,7 +75,7 @@ The required DirectX version (June 2010) can be found on Microsoft's website her
 https://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe
 
 - Will you add Ridley?
-._.
+...
 
 - Will you add new areas or powerups?
 No. The development team believes that the world of AM2R is complete, and we are 
@@ -766,6 +766,9 @@ CHANGELOG
 - Fixed frozen enemy hitsound stacking.
 - Other misc. fixes.
 - Added Ridley?
+
+1.5.4
+- Fixed shader crash on Fusion Difficulty.
 
 
 
