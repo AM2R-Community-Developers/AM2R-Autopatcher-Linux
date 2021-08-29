@@ -1,5 +1,5 @@
 PROJECT AM2R
-v1.5.4
+v1.5.5
 
 bit.ly/AM2Rblog
 reddit.com/r/AM2R
@@ -45,7 +45,7 @@ No. The game has changed a lot since the demo, along with the save format.
 - Can I use save files from versions before 1.4.3?
 Yes, but compatability is not guaranteed. Saves are located in C:\Users\[Your User Name]\AppData\Local\AM2R.
 1.0/1.1 saves use the filename savN.
-1.5 saves use the filename saveN.
+1.5+ saves use the filename saveN.
 Some older Community Update saves use the filename saveXN.
 
 - I have an Arcade cabinet, can I exit AM2R with just 1 key?
@@ -770,6 +770,10 @@ CHANGELOG
 1.5.4
 - Fixed shader crash on Fusion Difficulty.
 
+1.5.5
+- Fixed credits fadein.
+- Fixed missing credits entry.
+- Fixed missing font characters.
 
 
 Thanks for supporting this continued effort. See you next mission!
@@ -851,8 +855,10 @@ Alex 'Wanderer' Mack
 Lojemiru
 
 Programming
-Craig Kostelecky
 Metroid3D
+Scooterboot
+Craig Kostelecky
+milesthenerd
 
 Art Lead
 Dannon 'Shmegleskimo' Yates
