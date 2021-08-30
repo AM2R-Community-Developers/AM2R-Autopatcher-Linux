@@ -88,3 +88,10 @@ If you cannot run AM2R after installing the packages, use `ldd` in order to find
 After patching, if you want to launch AM2R via command line, make sure to do it like this: `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.  
 However, there is also a .desktop file with the above command included (this one has the AM2R logo). You can just double click on that in order to start the game.
  
+Some distributions don't give you any way to install libcurl3 anymore. Should that be the case, try to generate an empty library like so:
+```
+touch empty.c
+gcc -c empty.c empty.c -fPIC
+gcc -fPIC -shared -Wl,-soname,libcurl.so.4 empty.o -o libcurl.so.4
+```
+And then launch AM2R with LD_LIBRARY_PATH pointing to where your generated .so file is. For example `LD_LIBRARY_PATH=/home/me/libcurl-lib ./AM2R´
