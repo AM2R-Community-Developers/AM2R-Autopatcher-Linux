@@ -1,0 +1,31 @@
+name: PatchData Upload
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+    
+jobs:
+  PatchData:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Rename git folder to PatchData, zip it, upload zip and create release via GHR, rename git folder back
+      - name: Create and upload zip
+        run: |
+            ls -al
+            cd ..
+            mv ${{ github.event.repository.name }} "PatchData"
+            zipname="PatchData-V$((17+$GITHUB_RUN_NUMBER)).zip"
+            echo "Saving as $zipname"
+            zip -r $zipname ./PatchData
+            wget -c https://github.com/tcnksm/ghr/releases/download/v0.14.0/ghr_v0.14.0_linux_amd64.tar.gz
+            tar xfv ghr_v0.14.0_linux_amd64.tar.gz
+            cd PatchData
+            ../ghr_v0.14.0_linux_amd64/ghr -n  "Patchdata V$((17+$GITHUB_RUN_NUMBER))" -b "PatchData folder for commit ${{ github.event.head_commit.id }}. Can be used with the AM2RLauncher." Patchdata-v$((17+$GITHUB_RUN_NUMBER)) "../$zipname"
+            mv ../PatchData ../${{ github.event.repository.name }}
+            
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
