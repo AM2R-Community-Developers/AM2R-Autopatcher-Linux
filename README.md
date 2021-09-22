@@ -94,4 +94,4 @@ touch empty.c
 gcc -c empty.c empty.c -fPIC
 gcc -fPIC -shared -Wl,-soname,libcurl.so.4 empty.o -o libcurl.so.4
 ```
-And then launch AM2R with LD_LIBRARY_PATH pointing to where your generated .so file is. For example `LD_LIBRARY_PATH=/home/me/libcurl-lib ./AM2R´
+And then launch AM2R with LD_LIBRARY_PATH pointing to where your generated .so file is. For example `LD_LIBRARY_PATH=/home/me/libcurl-lib ./AM2R`
