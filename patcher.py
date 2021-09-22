@@ -5,7 +5,7 @@ from shutil import copy, copytree, rmtree, move
 import glob
 import subprocess
 
-version = '15_2'
+version = '15_5'
 
 output = 'am2r_' + version
 
@@ -50,7 +50,7 @@ if os.path.isdir("ARCHIVE-"+output):
 if os.path.isdir('AM2R.AppDir'):
     rmtree('AM2R.AppDir')
 
-print("-------------------------------------------\n\nAM2R 1.5.1 Python Autopatching Utility\nScripted by Lojemiru\n\n-------------------------------------------\n")
+print("-------------------------------------------\n\nAM2R 1.5.5 Python Autopatching Utility\nScripted by Lojemiru\n\n-------------------------------------------\n")
 
 # Check for AM2R_11.zip...
 if os.path.isfile('AM2R_11.zip'):
@@ -240,7 +240,9 @@ elif (type == '2'):
     # remove(output+"/game.unx")
 
     copytree(output, "utilities/android/assets")
-    copy("data/android/AM2R.ini", "utilities/android/assets")
+    # Only copy the file over if it exists
+    if (os.path.exists("data/android/AM2R.ini")):
+        copy("data/android/AM2R.ini", "utilities/android/assets")
 
     # Install new datafiles...
     print("\nInstalling new datafiles...")
