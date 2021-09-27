@@ -56,7 +56,7 @@ For Ubuntu-based distros this looks like this: `LD_PRELOAD=/usr/lib/i386-linux-g
 
 ### AMD
 AMD crashes on VM Game Maker: Studio builds. This is true for everything before 1.5 and after 1.5.3 as well as most mods.  
-You'll need to try each one of these, individually, in order until one works: `R600_DEBUG=mono`, `R600_DEBUG=vs.ps`, `radeonsi_sync_compile`, `R600_DEBUG=check_vm`.
+You'll need to try each one of these, individually, in order until one works: `R600_DEBUG=mono`, `R600_DEBUG=vs.ps`, `radeonsi_sync_compile=true`, `R600_DEBUG=check_vm`.
 We can't immediately tell which is needed for a given AMD card; these are sorted by performance.
 
 ### Intel
