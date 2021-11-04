@@ -133,7 +133,7 @@ if (type == '1'):
 
     #create AppImage
     print("Creating Appimage...")
-    copytree("data/AM2R.AppDir", "AM2R.AppDir")
+    copytree("data/AM2R.AppDir", "AM2R.AppDir", symlinks=True)
     subprocess.call(["cp", "-rpT", output , "AM2R.AppDir/usr/bin"])
     fd = os.open("/dev/null", os.O_WRONLY)
     savefd = os.dup(2)

@@ -1,23 +1,27 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 # make sure errors in sourced scripts will cause this script to stop
 set -e
 
+export LD_LIBRARY_PATH="$APPDIR/usr/lib:$LD_LIBRARY_PATH"
+
 this_dir="$(readlink -f "$(dirname "$0")")"
 
+# TODO: are these even necessary now anymore?
 # fix the GPU crashes here
 # AMD should already be fixed due it executing a file named "runner"
-if [ lspci | grep "VGA compatible controller: Advanced Micro Devices"]; then
+if lspci | grep -q "VGA compatible controller: Advanced Micro Devices" ; then
 	echo "AMD GPU detected"
+	#export radeonsi_sync_compile=true
 # Intel fix. Won't care to differentiate for ubuntu here
-elif [ lspci | grep "VGA compatible controller: Intel" ]; then
+elif lspci | grep -q "VGA compatible controller: Intel"; then
 	echo "Intel GPU detected"
-	export LIBGL_DRI3_DISABLE=1
+	#export LIBGL_DRI3_DISABLE=1
 # Nvidia fix. 
-elif [ lspci | grep "VGA compatible controller: NVIDIA Corporation" ]; then
+elif echo gpuText | grep -q "VGA compatible controller: NVIDIA Corporation"; then
 	echo "NVIDIA GPU detected"
-	export LIBGL_ALWAYS_INDIRECT=1
+	#export LIBGL_ALWAYS_INDIRECT=1
 fi
 
 
-exec "$this_dir"/AppRun-game "$@"
+exec "$this_dir"/AppRun-game
