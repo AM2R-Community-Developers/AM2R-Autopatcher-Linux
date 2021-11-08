@@ -47,21 +47,6 @@ Navigate to the newly created folder.
 
 If you have other questions/issues, please open an issue, post to [r/AM2R](https://www.reddit.com/r/AM2R/), or join the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).  
 
-## AppImage crashes
-Currently all GPUs have known problems when starting the AppImage. For all of these, please make sure you installed the 32-bit GPU drivers beforehand.
-
-### NVIDIA
-For Nvidia, you need `LD_PRELOAD` pointing to your 32-bit drivers.  
-For Ubuntu-based distros this looks like this: `LD_PRELOAD=/usr/lib/i386-linux-gnu/libGL.so.1`, for Arch-based distros it looks like this: `LD_PRELOAD=/usr/lib32/libGL.so`. It will likely be different for other distros.
-
-### AMD
-AMD crashes on VM Game Maker: Studio builds. This is true for everything before 1.5 and after 1.5.3 as well as most mods.  
-You'll need to try each one of these, individually, in order until one works: `R600_DEBUG=mono`, `R600_DEBUG=vs.ps`, `radeonsi_sync_compile=true`, `R600_DEBUG=check_vm`.
-We can't immediately tell which is needed for a given AMD card; these are sorted by performance.
-
-### Intel
-Intel crashes on Ubuntu-based distros. `LIBGL_DRI3_DISABLE=1` circumvents it.
-
 ## Android installation instructions
 You will need an Android device with a file explorer application installed, and a USB cable to connect said device to your computer.
 

@@ -79,7 +79,7 @@ if (type == '1'):
     print("Linux selected.\nApplying AM2R patch...")
     # apply AM2R.bps
     # subprocess.call(['utilities/floating/./flips-linux', '-a', 'data/AM2R.bps', output+'/AM2R.exe', output+'/AM2R'])
-    subprocess.call(['xdelta3', '-dfs', output+'/AM2R.exe', 'data/AM2R.xdelta', output+'/AM2R'])
+    subprocess.call(['xdelta3', '-dfs', output+'/AM2R.exe', 'data/AM2R.xdelta', output+'/runner'])
 
     print("\nApplying data patch...")
     # apply game.unx patch
@@ -129,7 +129,7 @@ if (type == '1'):
     rmtree(output+'/lang')
     
     #make game executable
-    subprocess.call(["chmod", "+x", output+"/AM2R"])
+    subprocess.call(["chmod", "+x", output+"/runner"])
 
     #create AppImage
     print("Creating Appimage...")
