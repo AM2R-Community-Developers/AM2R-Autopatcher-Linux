@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from zipfile import ZipFile
 import os.path
 from os import remove, mkdir, rename

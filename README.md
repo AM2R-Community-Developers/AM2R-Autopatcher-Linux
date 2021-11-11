@@ -25,7 +25,7 @@ sudo apt update && sudo apt install libc6:i386 libncurses5:i386 libstdc++6:i386
 ```
 
 Then install the following dependencies:  
-`sudo apt install python xdelta3 openjdk-8-jre libopenal1:i386`
+`sudo apt install python3 xdelta3 openjdk-8-jre libopenal1:i386`
 
 ### Red Hat (including Fedora)
 `sudo yum python xdelta java-1.8.0-openjdk`
