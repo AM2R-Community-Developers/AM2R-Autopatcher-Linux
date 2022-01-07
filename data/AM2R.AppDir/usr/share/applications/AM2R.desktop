@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=Game;
 Comment=Another Metroid 2 Remake (Community Edition)
-Exec=AM2R
+Exec=runner
 Icon=icon
 Name=AM2R
 Type=Application

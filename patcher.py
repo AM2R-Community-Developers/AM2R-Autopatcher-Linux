@@ -81,7 +81,7 @@ if (type == '1'):
     print("Linux selected.\nApplying AM2R patch...")
     # apply AM2R.bps
     # subprocess.call(['utilities/floating/./flips-linux', '-a', 'data/AM2R.bps', output+'/AM2R.exe', output+'/AM2R'])
-    subprocess.call(['xdelta3', '-dfs', output+'/AM2R.exe', 'data/AM2R.xdelta', output+'/AM2R'])
+    subprocess.call(['xdelta3', '-dfs', output+'/AM2R.exe', 'data/AM2R.xdelta', output+'/runner'])
 
     print("\nApplying data patch...")
     # apply game.unx patch
@@ -131,11 +131,11 @@ if (type == '1'):
     rmtree(output+'/lang')
     
     #make game executable
-    subprocess.call(["chmod", "+x", output+"/AM2R"])
+    subprocess.call(["chmod", "+x", output+"/runner"])
 
     #create AppImage
     print("Creating Appimage...")
-    copytree("data/AM2R.AppDir", "AM2R.AppDir")
+    copytree("data/AM2R.AppDir", "AM2R.AppDir", symlinks=True)
     subprocess.call(["cp", "-rpT", output , "AM2R.AppDir/usr/bin"])
     fd = os.open("/dev/null", os.O_WRONLY)
     savefd = os.dup(2)
@@ -150,28 +150,7 @@ if (type == '1'):
     mkdir(output)
     move("AM2R.AppImage", output+"/AM2R.AppImage")
     copy("data/files_to_copy/icon.png", output+"/icon.png")
-    
-    
-    #check if current OS is a fork of Debian
-    isDebianFork = 0
-    catOutput = subprocess.check_output(("cat", "/etc/os-release"))
-    catOutput = str(catOutput)
-    grep = "ID_LIKE=debian"
-    isDebianFork = catOutput.find(grep) >= 0
-    
-    #if not debian, check for ubuntu instead
-    if(not isDebianFork):
-        grep = "ID_LIKE=ubuntu"
-        isDebianFork = catOutput.find(grep) >= 0
-    
-    #cehck if current OS uses intel as gpu
-    isIntelGPU = 0
-    lspciOutput = subprocess.check_output(("lspci"))
-    lspciOutput = str(catOutput)
-    grep = "VGA compatible controller: Intel"
-    isIntelGPU = lspciOutput.find(grep) >= 0
-    
-    
+      
     print("\nDo you want to install AM2R systemwide?\n\n[y/n]\n")
     inp = getch()
 
@@ -189,9 +168,6 @@ if (type == '1'):
         fileContents = template.read()
         fileContents = fileContents.replace("[REPLACE]", "/usr/local/bin/am2r")
         
-        if( isDebianFork and isIntelGPU):
-            fileContents = fileContents.replace("Exec=", "Exec=LIBGL_DRI3_DISABLE=1 ")
-        
         desktopFile = open(output+"/AM2R.desktop", "w+")
         desktopFile.seek(0)
         desktopFile.write(fileContents)
@@ -207,9 +183,6 @@ if (type == '1'):
         fileContents = desktopFile.read()
         fileContents = fileContents.replace("[REPLACE]", cwd+"/"+output)
         
-        if( isDebianFork and isIntelGPU):
-            fileContents = fileContents.replace("Exec=", "Exec=LIBGL_DRI3_DISABLE=1 ")
-        
         desktopFile.seek(0)
         desktopFile.write(fileContents)
         #make the desktopFile executable. For some reason, this is not *necessary*, when copying it into /applications. 
@@ -217,10 +190,6 @@ if (type == '1'):
         subprocess.call(["chmod", "+x", desktopFilePath])
 
     print("Desktop file has been created!")
-
-    if( isDebianFork and isIntelGPU):
-        print("It has been detected, that you're running a fork of Debian along with an Intel GPU. Please use the provided .desktop File in order to launch the game.")
-        print("Ignore this message, if you installed AM2R systemwide")
 
 elif (type == '2'):
     print("Android selected.\nApplying data patch...")
@@ -300,6 +269,3 @@ else:
 
 
 print("\nThe operation was completed successfully. See you next mission!")
-
-
-
