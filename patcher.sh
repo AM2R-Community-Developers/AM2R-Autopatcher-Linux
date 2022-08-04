@@ -171,7 +171,7 @@ patch_am2r ()
 		echo "Signing APK..."
 		java -jar "$uberPath" -a "$SCRIPT_DIR/AM2RWrapper.apk"
 		# Cleanup
-		rm -R "$SCRIPT_DIR/AM2RWrapper.apk" "$SCRIPT_DIR/utilities/android/assets/" "$SCRIPT_DIR/AM2RWrapper/"
+		rm -R "$SCRIPT_DIR/AM2RWrapper.apk" "$SCRIPT_DIR/utilities/android/AM2RWrapper.apk" "$SCRIPT_DIR/utilities/android/assets/" "$SCRIPT_DIR/AM2RWrapper/"
 		# Move APK
 		mv "$SCRIPT_DIR/AM2RWrapper-aligned-debugSigned.apk" "$SCRIPT_DIR/AndroidM2R_"$VERSION"-signed.apk"
 
@@ -225,12 +225,14 @@ if (( $# <= 0 )); then
 		HQMUSIC=true
 	fi
 
-	echo "Do you want to install AM2R systemwide?"
-	echo "[y/n]"
-	read -n1 input
-	echo ""
-	if [ $input = "y" ]; then
-		SYSTEMWIDE=true
+	if [ $OSCHOICE = "linux" ]; then
+		echo "Do you want to install AM2R systemwide?"
+		echo "[y/n]"
+		read -n1 input
+		echo ""
+		if [ $input = "y" ]; then
+			SYSTEMWIDE=true
+		fi
 	fi
 
 	patch_am2r

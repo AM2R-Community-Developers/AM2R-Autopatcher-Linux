@@ -13,7 +13,7 @@ Include = /etc/pacman.d/mirrorlist
 ```
 
 Then install the following dependencies:  
-`sudo pacman -S --needed python xdelta3 jre8-openjdk lib32-libpulse`  
+`sudo pacman -S --needed xdelta3 jre8-openjdk lib32-libpulse`
 
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
@@ -25,13 +25,13 @@ sudo apt update && sudo apt install libc6:i386 libncurses5:i386 libstdc++6:i386
 ```
 
 Then install the following dependencies:  
-`sudo apt install python3 xdelta3 openjdk-8-jre libopenal1:i386`
+`sudo apt install xdelta3 openjdk-8-jre libopenal1:i386`
 
 ### Red Hat (including Fedora)
-`sudo yum python xdelta java-1.8.0-openjdk`
+`sudo yum xdelta java-1.8.0-openjdk`
 
 ### Suse
-`sudo zypper python xdelta3 java-1_8_0-openjdk`
+`sudo zypper xdelta3 java-1_8_0-openjdk`
 
 ## Controllers
 In order to be able to use a controller, you *need* the two following packages as well:
@@ -39,13 +39,13 @@ In order to be able to use a controller, you *need* the two following packages a
 - joystick
 
 ## Linux and Android patching process
-To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.py`. After installing the required dependencies for the version you would like to patch to, execute `patcher.py` via `python patcher.py`.  
+To patch your copy of (Windows) AM2R v1.1, place the `AM2R_11.zip` (case-sensitive) file in the same folder as `patcher.sh`. After installing the required dependencies for the version you would like to patch to, execute `patcher.sh` via `./patcher.sh`.
 During the installation you will be asked, if you want to patch it for Linux or Android. Press the corresponding number for that.
 
 ## After patching
 Navigate to the newly created folder. 
 
-If you have other questions/issues, please open an issue, post to [r/AM2R](https://www.reddit.com/r/AM2R/), or join the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ).  
+If you have other questions/issues, please open an issue, post to [r/AM2R](https://www.reddit.com/r/AM2R/), join the [Official AM2R Discord Server](https://discord.gg/YTQnkAJ) or join the [Official AM2R Matrix Space](https://matrix.to/#/#am2r:matrix.org).
 
 ## Android installation instructions
 You will need an Android device with a file explorer application installed, and a USB cable to connect said device to your computer.
