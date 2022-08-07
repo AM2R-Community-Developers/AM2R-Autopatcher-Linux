@@ -4,7 +4,7 @@
 set -eou pipefail
 
 # Patching user variables
-OSCHOICE=""
+OSCHOICE="linux"
 AM2RZIP=""
 HQMUSIC=false
 SYSTEMWIDE=false
@@ -26,7 +26,7 @@ patch_am2r ()
 		if [ "$SYSTEMWIDE" = true ]; then
 			PREFIX="/usr/local"
 		else
-			PREFIX="$SCRIPT_DIR"
+			PREFIX="$SCRIPT_DIR/am2r_${VERSION}"
 		fi
 	fi
 
@@ -35,12 +35,12 @@ patch_am2r ()
 		OUTPUT="${PREFIX}/opt/am2r"
 		RESOURCES="${OUTPUT}/assets"
 	else
-		OUTPUT="${PREFIX}/am2r_${VERSION}"
+		OUTPUT="${PREFIX}"
 		RESOURCES="${OUTPUT}/assets"
 	fi
 
-	# Cleanup in case the dirs/files exists
-	rm -rf "$OUTPUT" "$SCRIPT_DIR/AM2R.AppDir" "$SCRIPT_DIR/AM2R-x86_64.AppImage" "$SCRIPT_DIR/AM2RWrapper/" "$SCRIPT_DIR/utilities/android/assets/" "$SCRIPT_DIR/AM2RWrapper.apk"
+	# Cleanup in case the dir exists
+	rm -rf "$OUTPUT"
 
 	# Create necessary directories
 	mkdir -p "$OUTPUT" "$RESOURCES"
@@ -54,7 +54,7 @@ patch_am2r ()
 		cp -R "$AM2RZIP" "$OUTPUT"
 	else
 		echo "AM2R_11 not found! Please place AM2R_11.zip (case sensitive) into \"$SCRIPT_DIR\" or provide it via command line arguments and try again."
-		return 1
+		exit 1
 	fi
 
 	# Check for which OS we patch
@@ -63,14 +63,14 @@ patch_am2r ()
 		# Check whether Xdelta is installed
 		if [ ! command -v xdelta3 &> /dev/null ] ; then
 			>&2 echo "Xdelta is not installed! Please install 'xdelta3' from your local package manager!"
-			return 1
+			exit 1
 		fi
 
 		echo "Patching for Linux..."
 		echo "Applying AM2R xdelta patch..."
 		xdelta3 -dfs "$OUTPUT/AM2R.exe" "$SCRIPT_DIR/data/AM2R.xdelta" "$OUTPUT/runner"
 
-		echo "Applying data xdelta patch..."
+		echo "Applying asset xdelta patch..."
 		xdelta3 -dfs "$OUTPUT/data.win" "$SCRIPT_DIR/data/game.xdelta" "$RESOURCES/game.unx"
 
 		echo "Cleaning up residual AM2R 1.1 files..."
@@ -88,13 +88,14 @@ patch_am2r ()
 			cp "$SCRIPT_DIR"/data/HDR_HQ_in-game_music/*.ogg "$RESOURCES/"
 		fi
 
-		# Format music for Unix, aka lowercase it
-		# Finds every file, and if its not already lowercase, lowercases it.
+		# On Unix the music filenames need to be converted to lowercase.
 		find "$RESOURCES" -type f -exec bash -c '
-		    target="{}";
-		    cd "$(dirname "${target}")";
-		    target="$(basename "${target}")";
-		    ! [[ "${target}" = "${target,,}" ]] && mv "${target}" "${target,,}"
+			target="{}"
+			# Only files are meant to be modified, not the folders they are contained in.
+			cd "$(dirname "${target}")"
+			target="$(basename "${target}")"
+			# Convert the filename to lowercase, if required.
+			! [[ "${target}" = "${target,,}" ]] && mv "${target}" "${target,,}"
 		' \;
 
 		# Remove old lang folder
@@ -124,44 +125,40 @@ patch_am2r ()
 		# replace [REPLACE] with OUTPUT.Replace("/", "\/") in desktop file
 		sed -i "s/\[REPLACE\]/${OUTPUT//\//\\\/}/" "$desktopPath"
 
-		# If we don't want to create an AppImage, we're done.
 		if [ "$APPIMAGE" = false ]; then
 			# For non-appimage, the desktop file should point to runner
 			sed -i "s/AM2R.AppImage/runner/" "$desktopPath"
-			echo ""
-			echo "The operation was completed successfully. See you next mission!"
-			return 0
+		else
+			# Create AppImage
+			echo "Creating AppImage..."
+			# Dry/unsafe run with mktemp, as otherwise cp below will copy into the dir, rather than as the dir
+			local tempAppDir=$(mktemp -d -u)
+			trap "rm -rf $tempAppDir" EXIT
+			cp -R --preserve=links "$SCRIPT_DIR/data/AM2R.AppDir" $tempAppDir
+			mkdir -p "$tempAppDir/bin"
+			mv "$OUTPUT"/* "$tempAppDir/bin"
+			echo "$tempAppDir"
+			ARCH=x86_64 "$SCRIPT_DIR/utilities/appimagetool-x86_64.AppImage" -n $tempAppDir "$OUTPUT/AM2R.AppImage" 2> /dev/null
+			mv "$tempAppDir/bin/icon.png" "$OUTPUT/icon.png"
+			# For systemwide, we already moved the desktop file to prefix/share earlier above.
+			if [ "$SYSTEMWIDE" = false ]; then
+				mv "$tempAppDir/bin/AM2R.desktop" "$desktopPath"
+			fi
+			rm -R "$tempAppDir"
 		fi
-
-		# Create AppImage
-		echo "Creating AppImage..."
-		local tempAppDir=$(mktemp -d -u)
-		trap "rm -rf $tempAppDir" EXIT
-		cp -R --preserve=links "$SCRIPT_DIR/data/AM2R.AppDir" $tempAppDir
-		mkdir -p "$tempAppDir/bin"
-		mv "$OUTPUT"/* "$tempAppDir/bin"
-		echo "$tempAppDir"
-		ARCH=x86_64 "$SCRIPT_DIR/utilities/appimagetool-x86_64.AppImage" -n $tempAppDir 2> /dev/null
-		mv "$SCRIPT_DIR/AM2R-x86_64.AppImage" "$OUTPUT/AM2R.AppImage"
-		mv "$tempAppDir/bin/icon.png" "$OUTPUT/icon.png"
-		# For systemwide, we already moved the desktop file to prefix/share earlier above.
-		if [ "$SYSTEMWIDE" = false ]; then
-			mv "$tempAppDir/bin/AM2R.desktop" "$desktopPath"
-		fi
-		rm -R "$tempAppDir"
 
 	elif [ "$OSCHOICE" = "android" ]; then
 
 		# Check whether Xdelta is installed
 		if [ ! command -v xdelta3 &> /dev/null ] ; then
 			>&2 echo "Xdelta is not installed! Please install 'xdelta3' from your local package manager!"
-			return 1
+			exit 1
 		fi
 
 		# Check whether Java is installed
 		if [ ! command -v java &> /dev/null ] ; then
 			>&2 echo "Java is not installed! Please install a Java runtime from your local package manager!"
-			return 1
+			exit 1
 		fi
 
 		echo "Creating an APK for Android..."
@@ -186,6 +183,7 @@ patch_am2r ()
 
 		echo "Packaging APK..."
 		# decompile the apk
+		# Dry/unsafe run with mktemp, as otherwise apktool below will output into the dir, rather than as the dir
 		local tempApkDir=$(mktemp -d -u)
 		trap "rm -rf $tempApkDir" EXIT
 		java -jar "$apktoolPath" -q d -f "$SCRIPT_DIR/data/android/AM2RWrapper.apk" -o "$tempApkDir"
@@ -201,11 +199,11 @@ patch_am2r ()
 		java -jar "$uberPath" -a "$tempApkDir/AM2RWrapper.apk"
 
 		# Move APK
-		mv "$tempApkDir/AM2RWrapper-aligned-debugSigned.apk" "$SCRIPT_DIR/AndroidM2R_"$VERSION"-signed.apk"
+		mv "$tempApkDir/AM2RWrapper-aligned-debugSigned.apk" "$PREFIX/AndroidM2R_"$VERSION"-signed.apk"
 
 	else
 		>&2 echo "Invalid OS \"$OSCHOICE\"! Cannot patch anything!"
-		return 1
+		exit 1
 	fi
 
 	echo ""
@@ -229,6 +227,7 @@ main ()
 		APPIMAGE=true
 		AM2RZIP="$SCRIPT_DIR/AM2R_11.zip"
 		local input=""
+		echo "Running in interactive mode. For a full list of arguments, run the script with \"--help\""
 		echo "Select your patch type:"
 		echo ""
 		echo "1 - Linux"
@@ -298,11 +297,11 @@ main ()
 			shift 2 # past argument and value
 			;;
 		-h|--help)
-			echo -e "-s, --os\t\t\tThe OS to patch to. Valid are \"linux\" and \"android\"."
-			echo -e "-m, --hqmusic\t\t\tIf HighQuality music should be used."
-			echo -e "-w, --systemwide\t\tIf Linux should get installed systemwide."
-			echo -e "-a, --appimage\t\t\tIf an AppImage should get generated."
-			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide the folder where this script resides."
+			echo -e "-s, --os\t\t\tThe operating system to patch to. Valid are \"linux\" and \"android\". Default is \"linux\""
+			echo -e "-m, --hqmusic\t\t\tIf provided, high quality music will be used, otherwise low quality music will be used instead."
+			echo -e "-w, --systemwide\t\tIf provided, Linux will get installed systemwide, otherwise Linux will get installed portably. Has no effect on Android."
+			echo -e "-a, --appimage\t\t\tIf provided, an AppImage will get generated, otherwise the raw binary will get generated instead. Has no effect on Android."
+			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide <directory where this script resides>/AM2R-<VersionNumber>."
 			echo -e "-z, --am2rzip\t\t\tThe path to the AM2R_11 zip or directory. Default is <directory where the script resides>/AM2R_11.zip"
 			exit 0
 			;;
