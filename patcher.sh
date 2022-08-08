@@ -116,14 +116,23 @@ patch_am2r ()
 		echo "Creating desktop file..."
 		cp "$SCRIPT_DIR/data/files_to_copy/icon.png" "$GAMEDIR/icon.png"
 		local desktopPath="$GAMEDIR/AM2R.desktop"
+
+		# For systemwide we need to a) write to desktop file to a different directory
+		# and b) copy the icon to the proper XDG icon dir and c) use proper icon reference in desktop file
 		if [ "$SYSTEMWIDE" = true ]; then
 			mkdir -p "$PREFIX/share/applications"
 			desktopPath="$PREFIX/share/applications/AM2R.desktop"
+			mkdir -p "$PREFIX/share/icons/hicolor/72x72/apps"
+			mv "$GAMEDIR/icon.png" "$PREFIX/share/icons/hicolor/72x72/apps/am2r.icon"
 		fi
 		cp "$SCRIPT_DIR/DesktopTemplate" "$desktopPath"
 
-		# replace [REPLACE] with GAMEDIR.Replace("/", "\/") in desktop file
-		sed -i "s/\[REPLACE\]/${GAMEDIR//\//\\\/}/" "$desktopPath"
+		# Replace with proper path
+		sed -i "s#\[REPLACE\]#$GAMEDIR#" "$desktopPath"
+
+		if [ "$SYSTEMWIDE" = true ]; then
+			sed -i "s#Icon=$GAMEDIR/icon.png#Icon=am2r#" "$desktopPath"
+		fi
 
 		if [ "$APPIMAGE" = false ]; then
 			# For non-appimage, the desktop file should point to runner
@@ -139,7 +148,9 @@ patch_am2r ()
 			mv "$GAMEDIR"/* "$tempAppDir/bin"
 			echo "$tempAppDir"
 			ARCH=x86_64 "$SCRIPT_DIR/utilities/appimagetool-x86_64.AppImage" -n $tempAppDir "$GAMEDIR/AM2R.AppImage" 2> /dev/null
-			mv "$tempAppDir/bin/icon.png" "$GAMEDIR/icon.png"
+			if [ "$SYSTEMWIDE" = false ] ; then
+				mv "$tempAppDir/bin/icon.png" "$GAMEDIR/icon.png"
+			fi
 			# For systemwide, we already moved the desktop file to prefix/share earlier above.
 			if [ "$SYSTEMWIDE" = false ]; then
 				mv "$tempAppDir/bin/AM2R.desktop" "$desktopPath"
