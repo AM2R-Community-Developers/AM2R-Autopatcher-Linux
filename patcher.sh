@@ -23,7 +23,7 @@ patch_am2r ()
 {
 	# Set prefix to default value if empty
 	if [ -z "$PREFIX" ]; then
-		if [ "$SYSTEMWIDE" = true ]; then
+		if [ "$SYSTEMWIDE" = true ] && [ ! "$OSCHOICE" = "android" ]; then
 			PREFIX="/usr/local"
 		else
 			PREFIX="$SCRIPT_DIR/am2r_${VERSION}"
@@ -61,7 +61,7 @@ patch_am2r ()
 	if [ "$OSCHOICE" = "linux" ]; then
 
 		# Check whether Xdelta is installed
-		if [ ! command -v xdelta3 &> /dev/null ] ; then
+		if [ !  -x "$(command -v xdelta3)" ] ; then
 			>&2 echo "Xdelta is not installed! Please install 'xdelta3' from your local package manager!"
 			exit 1
 		fi
@@ -150,13 +150,13 @@ patch_am2r ()
 	elif [ "$OSCHOICE" = "android" ]; then
 
 		# Check whether Xdelta is installed
-		if [ ! command -v xdelta3 &> /dev/null ] ; then
+		if  [ !  -x "$(command -v xdelta3)" ]; then
 			>&2 echo "Xdelta is not installed! Please install 'xdelta3' from your local package manager!"
 			exit 1
 		fi
 
 		# Check whether Java is installed
-		if [ ! command -v java &> /dev/null ] ; then
+		if [ ! -x "$(command -v java)" ]; then
 			>&2 echo "Java is not installed! Please install a Java runtime from your local package manager!"
 			exit 1
 		fi
@@ -187,7 +187,7 @@ patch_am2r ()
 		local tempApkDir=$(mktemp -d -u)
 		trap "rm -rf $tempApkDir" EXIT
 		java -jar "$apktoolPath" -q d -f "$SCRIPT_DIR/data/android/AM2RWrapper.apk" -o "$tempApkDir"
-		cp -R "$OUTPUT/"* "$tempApkDir/assets"
+		mv "$OUTPUT/"* "$tempApkDir/assets"
 
 		echo "Editing apktool.yml..."
 		sed -i "s/doNotCompress:/doNotCompress:\n- ogg/" "$tempApkDir/apktool.yml"
@@ -219,7 +219,6 @@ main ()
 	echo "-------------------------------------------"
 	echo ""
 	echo "AM2R ${VERSION} Shell Autopatching Utility"
-	echo "Scripted by Lojemiru and Miepee"
 	echo ""
 	echo "-------------------------------------------"
 
@@ -301,8 +300,8 @@ main ()
 			echo -e "-m, --hqmusic\t\t\tIf provided, high quality music will be used, otherwise low quality music will be used instead."
 			echo -e "-w, --systemwide\t\tIf provided, Linux will get installed systemwide, otherwise Linux will get installed portably. Has no effect on Android."
 			echo -e "-a, --appimage\t\t\tIf provided, an AppImage will get generated, otherwise the raw binary will get generated instead. Has no effect on Android."
-			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide <directory where this script resides>/AM2R-<VersionNumber>."
-			echo -e "-z, --am2rzip\t\t\tThe path to the AM2R_11 zip or directory. Default is <directory where the script resides>/AM2R_11.zip"
+			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide \"<directory where this script resides>/am2r_<VersionNumber>\". As systemwide is ignored on Android, for Android this will always default to the latter option."
+			echo -e "-z, --am2rzip\t\t\tThe path to the AM2R_11 zip or directory. Default is  \"<directory where the script resides>/AM2R_11.zip\""
 			exit 0
 			;;
 		*)
