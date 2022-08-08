@@ -16,8 +16,8 @@ PREFIX=""
 dirResult="$(dirname '${BASH_SOURCE[0]}')"
 SCRIPT_DIR="$(realpath $dirResult)"
 VERSION="1.5.5"
-OUTPUT="${SCRIPT_DIR}/am2r_${VERSION}"
-RESOURCES="${OUTPUT}/assets"
+GAMEDIR="${SCRIPT_DIR}/am2r_${VERSION}"
+RESOURCES="${GAMEDIR}/assets"
 
 patch_am2r ()
 {
@@ -32,26 +32,26 @@ patch_am2r ()
 
 	# We need to do variable adjustments based on the prefix
 	if [ "$SYSTEMWIDE" = true ]; then
-		OUTPUT="${PREFIX}/opt/am2r"
-		RESOURCES="${OUTPUT}/assets"
+		GAMEDIR="${PREFIX}/opt/am2r"
+		RESOURCES="${GAMEDIR}/assets"
 	else
-		OUTPUT="${PREFIX}"
-		RESOURCES="${OUTPUT}/assets"
+		GAMEDIR="${PREFIX}"
+		RESOURCES="${GAMEDIR}/assets"
 	fi
 
 	# Cleanup in case the dir exists
-	rm -rf "$OUTPUT"
+	rm -rf "$GAMEDIR"
 
 	# Create necessary directories
-	mkdir -p "$OUTPUT" "$RESOURCES"
+	mkdir -p "$GAMEDIR" "$RESOURCES"
 
 	# Check for AM2R_11
 	if [[ -f "$AM2RZIP" ]]; then
 		echo "AM2R_11.zip found!"
-		unzip -q "$AM2RZIP" -d "$OUTPUT"
+		unzip -q "$AM2RZIP" -d "$GAMEDIR"
 	elif [[ -d "$AM2RZIP" ]]; then
 		echo "AM2R_11 folder found!"
-		cp -R "$AM2RZIP" "$OUTPUT"
+		cp -R "$AM2RZIP" "$GAMEDIR"
 	else
 		echo "AM2R_11 not found! Please place AM2R_11.zip (case sensitive) into \"$SCRIPT_DIR\" or provide it via command line arguments and try again."
 		exit 1
@@ -68,17 +68,17 @@ patch_am2r ()
 
 		echo "Patching for Linux..."
 		echo "Applying AM2R xdelta patch..."
-		xdelta3 -dfs "$OUTPUT/AM2R.exe" "$SCRIPT_DIR/data/AM2R.xdelta" "$OUTPUT/runner"
+		xdelta3 -dfs "$GAMEDIR/AM2R.exe" "$SCRIPT_DIR/data/AM2R.xdelta" "$GAMEDIR/runner"
 
 		echo "Applying asset xdelta patch..."
-		xdelta3 -dfs "$OUTPUT/data.win" "$SCRIPT_DIR/data/game.xdelta" "$RESOURCES/game.unx"
+		xdelta3 -dfs "$GAMEDIR/data.win" "$SCRIPT_DIR/data/game.xdelta" "$RESOURCES/game.unx"
 
 		echo "Cleaning up residual AM2R 1.1 files..."
-		rm "$OUTPUT/AM2R.exe" "$OUTPUT/data.win" "$OUTPUT/D3DX9_43.dll"
+		rm "$GAMEDIR/AM2R.exe" "$GAMEDIR/data.win" "$GAMEDIR/D3DX9_43.dll"
 
 		echo "Formatting game directory..."
 		# This won't move the runner, because it doesn't have a dot
-		mv $OUTPUT/*.* "$RESOURCES/"
+		mv $GAMEDIR/*.* "$RESOURCES/"
 
 		echo "Installing new datafiles..."
 		cp -R "$SCRIPT_DIR"/data/files_to_copy/* "$RESOURCES/"
@@ -99,31 +99,31 @@ patch_am2r ()
 		' \;
 
 		# Remove old lang folder
-		rm -R "$OUTPUT"/lang
+		rm -R "$GAMEDIR"/lang
 
-		chmod +x "$OUTPUT/runner"
+		chmod +x "$GAMEDIR/runner"
 
 		if [ "$SYSTEMWIDE" = true ]; then
 			mkdir -p "$PREFIX/bin"
 			if [ "$APPIMAGE" = true ]; then
-				ln -sf "$OUTPUT/AM2R.AppImage" "$PREFIX/bin/am2r"
+				ln -sf "$GAMEDIR/AM2R.AppImage" "$PREFIX/bin/am2r"
 			else
-				ln -sf "$OUTPUT/runner" "$PREFIX/bin/am2r"
+				ln -sf "$GAMEDIR/runner" "$PREFIX/bin/am2r"
 			fi
 		fi
 
 		# Create .desktop file
 		echo "Creating desktop file..."
-		cp "$SCRIPT_DIR/data/files_to_copy/icon.png" "$OUTPUT/icon.png"
-		local desktopPath="$OUTPUT/AM2R.desktop"
+		cp "$SCRIPT_DIR/data/files_to_copy/icon.png" "$GAMEDIR/icon.png"
+		local desktopPath="$GAMEDIR/AM2R.desktop"
 		if [ "$SYSTEMWIDE" = true ]; then
 			mkdir -p "$PREFIX/share/applications"
 			desktopPath="$PREFIX/share/applications/AM2R.desktop"
 		fi
 		cp "$SCRIPT_DIR/DesktopTemplate" "$desktopPath"
 
-		# replace [REPLACE] with OUTPUT.Replace("/", "\/") in desktop file
-		sed -i "s/\[REPLACE\]/${OUTPUT//\//\\\/}/" "$desktopPath"
+		# replace [REPLACE] with GAMEDIR.Replace("/", "\/") in desktop file
+		sed -i "s/\[REPLACE\]/${GAMEDIR//\//\\\/}/" "$desktopPath"
 
 		if [ "$APPIMAGE" = false ]; then
 			# For non-appimage, the desktop file should point to runner
@@ -136,10 +136,10 @@ patch_am2r ()
 			trap "rm -rf $tempAppDir" EXIT
 			cp -R --preserve=links "$SCRIPT_DIR/data/AM2R.AppDir" $tempAppDir
 			mkdir -p "$tempAppDir/bin"
-			mv "$OUTPUT"/* "$tempAppDir/bin"
+			mv "$GAMEDIR"/* "$tempAppDir/bin"
 			echo "$tempAppDir"
-			ARCH=x86_64 "$SCRIPT_DIR/utilities/appimagetool-x86_64.AppImage" -n $tempAppDir "$OUTPUT/AM2R.AppImage" 2> /dev/null
-			mv "$tempAppDir/bin/icon.png" "$OUTPUT/icon.png"
+			ARCH=x86_64 "$SCRIPT_DIR/utilities/appimagetool-x86_64.AppImage" -n $tempAppDir "$GAMEDIR/AM2R.AppImage" 2> /dev/null
+			mv "$tempAppDir/bin/icon.png" "$GAMEDIR/icon.png"
 			# For systemwide, we already moved the desktop file to prefix/share earlier above.
 			if [ "$SYSTEMWIDE" = false ]; then
 				mv "$tempAppDir/bin/AM2R.desktop" "$desktopPath"
@@ -166,28 +166,28 @@ patch_am2r ()
 		local uberPath="$SCRIPT_DIR/utilities/android/uber-apk-signer.jar"
 
 		echo "Applying Android patch..."
-		xdelta3 -dfs "$OUTPUT/data.win" "$SCRIPT_DIR/data/droid.xdelta" "$OUTPUT/game.droid"
+		xdelta3 -dfs "$GAMEDIR/data.win" "$SCRIPT_DIR/data/droid.xdelta" "$GAMEDIR/game.droid"
 
-		rm -rf "$OUTPUT/D3DX9_43.dll" "$OUTPUT/AM2R.exe" "$OUTPUT/data.win" "$OUTPUT/assets"
+		rm -rf "$GAMEDIR/D3DX9_43.dll" "$GAMEDIR/AM2R.exe" "$GAMEDIR/data.win" "$GAMEDIR/assets"
 
 		if [ -f "$SCRIPT_DIR/data/android/AM2R.ini" ]; then
-			cp -p "$SCRIPT_DIR/data/android/AM2R.ini" "$OUTPUT/"
+			cp -p "$SCRIPT_DIR/data/android/AM2R.ini" "$GAMEDIR/"
 		fi
 
 		echo "Installing new datafiles..."
-		cp -R "$SCRIPT_DIR"/data/files_to_copy/* "$OUTPUT"
+		cp -R "$SCRIPT_DIR"/data/files_to_copy/* "$GAMEDIR"
 
 		if [ "$HQMUSIC" = true ]; then
-			cp "$SCRIPT_DIR"/data/HDR_HQ_in-game_music/*.ogg "$OUTPUT"
+			cp "$SCRIPT_DIR"/data/HDR_HQ_in-game_music/*.ogg "$GAMEDIR"
 		fi
 
 		echo "Packaging APK..."
 		# decompile the apk
-		# Dry/unsafe run with mktemp, as otherwise apktool below will output into the dir, rather than as the dir
+		# Dry/unsafe run with mktemp, as otherwise apktool below will GAMEDIR into the dir, rather than as the dir
 		local tempApkDir=$(mktemp -d -u)
 		trap "rm -rf $tempApkDir" EXIT
 		java -jar "$apktoolPath" -q d -f "$SCRIPT_DIR/data/android/AM2RWrapper.apk" -o "$tempApkDir"
-		mv "$OUTPUT/"* "$tempApkDir/assets"
+		mv "$GAMEDIR/"* "$tempApkDir/assets"
 
 		echo "Editing apktool.yml..."
 		sed -i "s/doNotCompress:/doNotCompress:\n- ogg/" "$tempApkDir/apktool.yml"
