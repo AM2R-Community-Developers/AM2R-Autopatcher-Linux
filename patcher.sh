@@ -30,17 +30,17 @@ patch_am2r ()
 		fi
 	fi
 
+	GAMEDIR=$(mktemp -d -u)
+	trap "rm -rf $GAMEDIR" EXIT
+	RESOURCES="${GAMEDIR}/assets"
+
+	local output=""
 	# We need to do variable adjustments based on the prefix
 	if [ "$SYSTEMWIDE" = true ]; then
-		GAMEDIR="${PREFIX}/opt/am2r"
-		RESOURCES="${GAMEDIR}/assets"
+		output="${PREFIX}/opt/am2r"
 	else
-		GAMEDIR="${PREFIX}"
-		RESOURCES="${GAMEDIR}/assets"
+		output="${PREFIX}"
 	fi
-
-	# Cleanup in case the dir exists
-	rm -rf "$GAMEDIR"
 
 	# Create necessary directories
 	mkdir -p "$GAMEDIR" "$RESOURCES"
@@ -106,9 +106,9 @@ patch_am2r ()
 		if [ "$SYSTEMWIDE" = true ]; then
 			mkdir -p "$PREFIX/bin"
 			if [ "$APPIMAGE" = true ]; then
-				ln -sf "$GAMEDIR/AM2R.AppImage" "$PREFIX/bin/am2r"
+				ln -sf "$output/AM2R.AppImage" "$PREFIX/bin/am2r"
 			else
-				ln -sf "$GAMEDIR/runner" "$PREFIX/bin/am2r"
+				ln -sf "$output/runner" "$PREFIX/bin/am2r"
 			fi
 		fi
 
@@ -146,7 +146,6 @@ patch_am2r ()
 			cp -R --preserve=links "$SCRIPT_DIR/data/AM2R.AppDir" $tempAppDir
 			mkdir -p "$tempAppDir/bin"
 			mv "$GAMEDIR"/* "$tempAppDir/bin"
-			echo "$tempAppDir"
 			ARCH=x86_64 "$SCRIPT_DIR/utilities/appimagetool-x86_64.AppImage" -n $tempAppDir "$GAMEDIR/AM2R.AppImage" 2> /dev/null
 			if [ "$SYSTEMWIDE" = false ] ; then
 				mv "$tempAppDir/bin/icon.png" "$GAMEDIR/icon.png"
@@ -216,6 +215,11 @@ patch_am2r ()
 		>&2 echo "Invalid OS \"$OSCHOICE\"! Cannot patch anything!"
 		exit 1
 	fi
+
+	# Put everything from temp directory into the proper output directory
+	# Moving does *not* work, as mv doesn't allow to overwrite existing directories
+	mkdir -p $output
+	cp -r -f  $GAMEDIR/* $output
 
 	echo ""
 	echo "The operation was completed successfully. See you next mission!"
