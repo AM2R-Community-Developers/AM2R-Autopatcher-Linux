@@ -5,7 +5,7 @@ This utility patches the official AM2R 1.1 release (Windows) to the fan-made Com
 The patcher and the installer only require a small amount of dependencies. Note that the Java-related packages (`java`, `jre`, `jdk`) packages are only required for building an Android APK.
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
-Make sure that multilib is enabled, as `lib32-libpulse` is a 32-bit library, and Arch does not enable 32-bit support by default.
+Make sure that multilib is enabled, as `lib32-libpulse` is a 32-bit library and Arch does not enable 32-bit support by default.
 To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that the next two lines are uncommented:
 ```
 [multilib]
@@ -17,7 +17,7 @@ Then install the following dependencies:
 
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-Make sure that the i386 architecture is enabled for you, as libopenal1 requires the 32-bit version, and Ubuntu does not enable 32-bit support by default.
+Make sure you enable the i386 architecture, as libopenal1 requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
 To enable it, do the following:
 ```
 sudo dpkg --add-architecture i386
@@ -31,7 +31,7 @@ Then install the following dependencies:
 Enter a shell with all the required dependencies to run the script:
 `nix shell nixpkgs#{gnused,unzip,xdelta,patchelf,jre}`
 
-Note that the AppImage will **not** work on NixOS, please follow the instructions in the manual installation section.
+Note that the AppImage will **not** work on NixOS. Please follow the instructions in the manual installation section.
 
 ### Red Hat (including Fedora)
 `sudo yum unzip sed xdelta patchelf java-1.8.0-openjdk`
@@ -40,7 +40,7 @@ Note that the AppImage will **not** work on NixOS, please follow the instruction
 `sudo zypper unzip sed xdelta3 patchelf java-1_8_0-openjdk`
 
 ## Controllers
-On some distributions, in order to be able to use a controller, you *need* the two following packages as well:
+In order to use a controller on some distributions, the two following packages are *mandatory*:
 - jstest-gtk
 - joystick
 
@@ -73,7 +73,7 @@ If for some reason, you are not able to access your phone, you can use the adb (
 4. Open a terminal and type `adb devices`. This should show your phone. If it does, type `adb install [path-to-apk]`.
 
 ## Manual installation
-This section, is if you don't like AppImages, or want to run the game natively. Unless you have a very good reason for it, please use the AppImage instead!
+Manual installation should not be used without due cause. Unless you have a very good reason for avoiding AppImages, please use the default installation instead!
 If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing.
 
 ### Dependencies
@@ -85,7 +85,7 @@ To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure t
 `sudo pacman -S --needed unzip patchelf sed xdelta3 lib32-openal lib32-libcurl lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-Make sure that the i386 architecture is enabled for you, as libopenal1 requires the 32-bit version, and Ubuntu does not enable 32-bit support by default.
+Make sure you enable the i386 architecture, as libopenal1 requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
 To enable it, do the following:
 ```
 sudo dpkg --add-architecture i386
@@ -94,7 +94,7 @@ After that you can run this:
 `sudo apt install unzip patchelf sed xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386`
 
 ### Nix (Including NixOS)
-After running the script, the game can be started using the `steam-run` FHS environment, as to avoid having to patch its dynamic linker and dynamically linked libraries. You can run it with the following command:
+After installation, the game can be run using the steam-run FHS environment. This avoids having to patch the dynamic linker and dynamically linked libraries. You can run it with the following command:
 `NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#steam-run --command steam-run ./runner`
 
 ### Red Hat (including Fedora)
