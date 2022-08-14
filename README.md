@@ -17,7 +17,7 @@ Then install the following dependencies:
 
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-Make sure you enable the i386 architecture, as libopenal1 requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
+Make sure you enable the i386 architecture, as `libopenal1` requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
 To enable it, do the following:
 ```
 sudo dpkg --add-architecture i386
@@ -85,7 +85,7 @@ To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure t
 `sudo pacman -S --needed unzip patchelf sed xdelta3 lib32-openal lib32-libcurl lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-Make sure you enable the i386 architecture, as libopenal1 requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
+Make sure you enable the i386 architecture, as `libopenal1` requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
 To enable it, do the following:
 ```
 sudo dpkg --add-architecture i386
@@ -94,7 +94,7 @@ After that you can run this:
 `sudo apt install unzip patchelf sed xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386`
 
 ### Nix (Including NixOS)
-After installation, the game can be run using the steam-run FHS environment. This avoids having to patch the dynamic linker and dynamically linked libraries. You can run it with the following command:
+After installation, the game can be run using the `steam-run` FHS environment. This avoids having to patch the dynamic linker and dynamically linked libraries. You can run it with the following command:
 `NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#steam-run --command steam-run ./runner`
 
 ### Red Hat (including Fedora)
