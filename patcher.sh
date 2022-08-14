@@ -23,7 +23,7 @@ checkInstalled()
 {
         local command="$1"
         # Check wether a command is installed
-	if [ !  -x "$(command -v "${command}" ] ; then
+        if [ !  -x "$(command -v "${command}")" ] ; then
 		>&2 echo "${command} is not installed! Please install '${command}' from your local package manager!"
 		exit 1
 	fi
