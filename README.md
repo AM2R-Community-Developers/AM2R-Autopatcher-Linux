@@ -2,10 +2,10 @@
 This utility patches the official AM2R 1.1 release (Windows) to the fan-made Community Update (Linux).
 
 ## Dependencies
-The patcher and the installer only require a small amount of dependencies:
+The patcher and the installer only require a small amount of dependencies. Note that the Java-related packages (`java`, `jre`, `jdk`) packages are only required for building an Android APK.
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
-Make sure that multilib is enabled, as `lib32-libpulse` is a 32-bit library, and Arch does not enable 32-bit support by default.  
+Make sure that multilib is enabled, as `lib32-libpulse` is a 32-bit library and Arch does not enable 32-bit support by default.
 To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that the next two lines are uncommented:
 ```
 [multilib]
@@ -13,28 +13,34 @@ Include = /etc/pacman.d/mirrorlist
 ```
 
 Then install the following dependencies:  
-`sudo pacman -S --needed unzip sed xdelta3 jre8-openjdk lib32-libpulse`
+`sudo pacman -S --needed unzip sed patchelf xdelta3 jre8-openjdk lib32-libpulse`
 
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-Make sure that the i386 architecture is enabled for you, as libopenal1 requires the 32-bit version, and Ubuntu does not enable 32-bit support by default.  
+Make sure you enable the i386 architecture, as `libopenal1` requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
 To enable it, do the following:
 ```
 sudo dpkg --add-architecture i386
-sudo apt update && sudo apt install libc6:i386 libncurses5:i386 libstdc++6:i386
+sudo apt update && sudo apt install libc6:i386 libncurses5:i386 libstdc++6:i386 libopenal1:i386
 ```
 
 Then install the following dependencies:  
-`sudo apt install unzip sed xdelta3 openjdk-8-jre libopenal1:i386`
+`sudo apt install unzip sed xdelta3 patchelf openjdk-8-jre`
+
+### Nix (Including NixOS)
+Enter a shell with all the required dependencies to run the script:
+`nix shell nixpkgs#{gnused,unzip,xdelta,patchelf,jre}`
+
+Note that the AppImage will **not** work on NixOS. Please follow the instructions in the manual installation section.
 
 ### Red Hat (including Fedora)
-`sudo yum unzip sed xdelta java-1.8.0-openjdk`
+`sudo yum unzip sed xdelta patchelf java-1.8.0-openjdk`
 
 ### Suse
-`sudo zypper unzip sed xdelta3 java-1_8_0-openjdk`
+`sudo zypper unzip sed xdelta3 patchelf java-1_8_0-openjdk`
 
 ## Controllers
-In order to be able to use a controller, you *need* the two following packages as well:
+In order to use a controller on some distributions, the two following packages are *mandatory*:
 - jstest-gtk
 - joystick
 
@@ -67,7 +73,8 @@ If for some reason, you are not able to access your phone, you can use the adb (
 4. Open a terminal and type `adb devices`. This should show your phone. If it does, type `adb install [path-to-apk]`.
 
 ## Manual installation
-This section, is if you don't like appimages, or want to run the game natively. Unless you have a very good reason for it, please use the AppImage instead!
+Manual installation should not be used without due cause. Unless you have a very good reason for avoiding AppImages, please use the default installation instead!
+If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing.
 
 ### Dependencies
 As said above, these dependencies are **only** needed if you want to run the game natively.
@@ -75,25 +82,20 @@ As said above, these dependencies are **only** needed if you want to run the gam
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
 Make sure that multilib is enabled, as this is a 32-bit application and Arch does not do so by default.
 To enable it, go to `/etc/pacman.conf`, search for `[multilib]`, and make sure that both this and the next line are uncommented. After that, install the following packages:  
-`sudo pacman -S --needed unzip sed xdelta3 lib32-openal lib32-openssl-1.0 lib32-libcurl-compat lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
+`sudo pacman -S --needed unzip patchelf sed xdelta3 lib32-openal lib32-libcurl lib32-libpulse lib32-gcc-libs lib32-libxxf86vm lib32-libglvnd lib32-libxrandr lib32-glu`
 
 ### Debian (including Ubuntu, Mint, PopOS, etc.)
-`sudo apt install unzip sed xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl3:i386 libssl1.0:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386`
+Make sure you enable the i386 architecture, as `libopenal1` requires the 32-bit version and Ubuntu does not enable 32-bit support by default.
+To enable it, do the following:
+```
+sudo dpkg --add-architecture i386
+```
+After that you can run this:
+`sudo apt install unzip patchelf sed xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libcurl:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386`
 
-On newer versions (Debian 10+ or Ubuntu 18+) you may have to do the below command instead. Please make sure first, that you neither have `libcurl3` nor `libcurl4` installed.  
-`sudo apt install unzip sed xdelta3 libc6:i386 libstdc++6:i386 zlib1g-dev:i386 libxxf86vm1:i386 libopenal1:i386 libxrandr2:i386 libglu1:i386 && wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.5_i386.deb && sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.5_i386.deb && wget http://archive.ubuntu.com/ubuntu/pool/universe/c/curl3/libcurl3_7.58.0-2ubuntu2_i386.deb && sudo dpkg -i libcurl3_7.58.0-2ubuntu2_i386.deb && rm libssl1.0.0_1.0.2n-1ubuntu5.5_i386.deb libcurl3_7.58.0-2ubuntu2_i386.deb && sudo apt install -f`
+### Nix (Including NixOS)
+After installation, the game can be run using the `steam-run` FHS environment. This avoids having to patch the dynamic linker and dynamically linked libraries. You can run it with the following command:
+`NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#steam-run --command steam-run ./runner`
 
 ### Red Hat (including Fedora)
-`sudo yum install unzip sed xdelta openal-soft compat-openssl10`
-
-If you cannot run AM2R after installing the packages, use `ldd` in order to find out which packages are missing.  
-After patching, if you want to launch AM2R via command line, make sure to do it like this: `env "LD_PRELOAD=libcurl.so.3" ./AM2R`.  
-However, there is also a .desktop file with the above command included (this one has the AM2R logo). You can just double click on that in order to start the game.
- 
-Some distributions don't give you any way to install libcurl3 anymore. Should that be the case, try to generate an empty library like so:
-```
-touch empty.c
-gcc -c empty.c empty.c -fPIC
-gcc -fPIC -shared -Wl,-soname,libcurl.so.4 empty.o -o libcurl.so.4
-```
-And then launch AM2R with LD_LIBRARY_PATH pointing to where your generated .so file is. For example `LD_LIBRARY_PATH=/home/me/libcurl-lib ./AM2R`
+`sudo yum install unzip sed xdelta openal-soft patchelf`
