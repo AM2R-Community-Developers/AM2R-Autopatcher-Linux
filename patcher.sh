@@ -21,9 +21,9 @@ RESOURCES="${GAMEDIR}/assets"
 
 checkInstalled()
 {
-        local command="$1"
-        # Check wether a command is installed
-        if [ !  -x "$(command -v "${command}")" ] ; then
+		local command="$1"
+		# Check wether a command is installed
+		if [ !  -x "$(command -v "${command}")" ] ; then
 		>&2 echo "${command} is not installed! Please install '${command}' from your local package manager!"
 		exit 1
 	fi
@@ -31,9 +31,9 @@ checkInstalled()
 
 patch_am2r ()
 {
-        checkInstalled "unzip"
-        checkInstalled "sed"
-        checkInstalled "xdelta3"
+	checkInstalled "unzip"
+	checkInstalled "sed"
+	checkInstalled "xdelta3"
 
 	# Set prefix to default value if empty
 	if [ -z "$PREFIX" ]; then
@@ -73,7 +73,7 @@ patch_am2r ()
 
 	# Check for which OS we patch
 	if [ "$OSCHOICE" = "linux" ]; then
-                checkInstalled "patchelf"
+		checkInstalled "patchelf"
 
 		echo "Patching for Linux..."
 		echo "Applying AM2R xdelta patch..."
@@ -107,27 +107,27 @@ patch_am2r ()
 			! [[ "${target}" = "${target,,}" ]] && mv "${target}" "${target,,}"
 		' \;
 
-                # GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
-                # When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
-                # the outdated version of OpenSSL, even though it has been patched to link to the newer version.
-                # After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
-                echo "Patching insecure OpenSSL dependency with libcurl..."
-                patchelf "$GAMEDIR/runner" \
-                        --replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
-                        --replace-needed "libssl.so.1.0.0" "libcurl.so"
+		# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
+		# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
+		# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
+		# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
+		echo "Patching insecure OpenSSL dependency with libcurl..."
+		patchelf "$GAMEDIR/runner" \
+			--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
+			--replace-needed "libssl.so.1.0.0" "libcurl.so"
 
-                # An environment variable needs to be set on Mesa to avoid a race related to multithreaded shader compilation.
-                # To do this, we move the original executable to a hidden file, and create a bash script with the needed variable in place of the original.
-                echo "Creating wrapper script to fix Mesa support..."
-                mv "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
-                echo '
+		# An environment variable needs to be set on Mesa to avoid a race related to multithreaded shader compilation.
+		# To do this, we move the original executable to a hidden file, and create a bash script with the needed variable in place of the original.
+		echo "Creating wrapper script to fix Mesa support..."
+		mv "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
+		echo '
 #!/usr/bin/env bash
 # This environment variable fixes Mesa support. If another driver is used this should not do anything.
 # See https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4181 for more information.
 radeonsi_sync_compile="true" exec "$(dirname "${BASH_SOURCE[0]}")/.runner-unwrapped" "$@"
-                ' > "$GAMEDIR/runner"
+		' > "$GAMEDIR/runner"
 
-                chmod +x "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
+		chmod +x "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
 
 
 		# Remove old lang folder
@@ -190,7 +190,7 @@ radeonsi_sync_compile="true" exec "$(dirname "${BASH_SOURCE[0]}")/.runner-unwrap
 		fi
 
 	elif [ "$OSCHOICE" = "android" ]; then
-                checkInstalled "java"
+		checkInstalled "java"
 
 		echo "Creating an APK for Android..."
 		local apktoolPath="$SCRIPT_DIR/utilities/android/apktool.jar"
@@ -240,7 +240,9 @@ radeonsi_sync_compile="true" exec "$(dirname "${BASH_SOURCE[0]}")/.runner-unwrap
 	# Put everything from temp directory into the proper output directory
 	# Moving does *not* work, as mv doesn't allow to overwrite existing directories
 	mkdir -p $output
-	cp -r -f  $GAMEDIR/* $output
+	# This does not copy hidden files.
+	cp -rf $GAMEDIR/* $output
+	cp -rf $GAMEDIR/.runner-unwrapped $output
 
 	echo ""
 	echo "The operation was completed successfully. See you next mission!"
