@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-# exit on any error to avoid showing everything was successfull even though it wasnt
+# Exit on any error to avoid showing everything was successfull even though it wasnt
 set -eou pipefail
+
+# We want to move hidden files too
+shopt -s dotglob
 
 # Patching user variables
 OSCHOICE="linux"
@@ -111,10 +114,13 @@ patch_am2r ()
 		# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
 		# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
 		# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
-		echo "Patching insecure OpenSSL dependency with libcurl..."
-		patchelf "$GAMEDIR/runner" \
-			--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
-			--replace-needed "libssl.so.1.0.0" "libcurl.so"
+
+		# Currently, patchelf has a bug where this does not work correctly
+		# So it will stay commented out until it does
+		#echo "Patching insecure OpenSSL dependency with libcurl..."
+		#patchelf "$GAMEDIR/runner" \
+		#	--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
+		#	--replace-needed "libssl.so.1.0.0" "libcurl.so"
 
 		# An environment variable needs to be set on Mesa to avoid a race related to multithreaded shader compilation.
 		# To do this, we move the original executable to a hidden file, and create a bash script with the needed variable in place of the original.
@@ -125,7 +131,7 @@ patch_am2r ()
 # This environment variable fixes Mesa support. If another driver is used this should not do anything.
 # See https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4181 for more information.
 radeonsi_sync_compile="true" exec "$(dirname "${BASH_SOURCE[0]}")/.runner-unwrapped" "$@"
-		' > "$GAMEDIR/runner"
+' > "$GAMEDIR/runner"
 
 		chmod +x "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
 
@@ -240,9 +246,7 @@ radeonsi_sync_compile="true" exec "$(dirname "${BASH_SOURCE[0]}")/.runner-unwrap
 	# Put everything from temp directory into the proper output directory
 	# Moving does *not* work, as mv doesn't allow to overwrite existing directories
 	mkdir -p $output
-	# This does not copy hidden files.
 	cp -rf $GAMEDIR/* $output
-	cp -rf $GAMEDIR/.runner-unwrapped $output
 
 	echo ""
 	echo "The operation was completed successfully. See you next mission!"
