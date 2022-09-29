@@ -130,7 +130,7 @@ patch_am2r ()
 #!/usr/bin/env bash
 # This environment variable fixes Mesa support. If another driver is used this should not do anything.
 # See https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4181 for more information.
-radeonsi_sync_compile="true" exec "$(dirname "${BASH_SOURCE[0]}")/.runner-unwrapped" "$@"
+radeonsi_sync_compile="true" exec "$(dirname "$(readlink "$0")")/.runner-unwrapped" "$@"
 ' > "$GAMEDIR/runner"
 
 		chmod +x "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
