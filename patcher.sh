@@ -166,10 +166,10 @@ radeonsi_sync_compile="true" exec "$(dirname "$(readlink -f "$0")")/.runner-unwr
 		cp "$SCRIPT_DIR/DesktopTemplate" "$desktopPath"
 
 		# Replace with proper path
-		sed -i "s#\[REPLACE\]#$GAMEDIR#" "$desktopPath"
+		sed -i "s#\[REPLACE\]#$output#" "$desktopPath"
 
 		if [ "$SYSTEMWIDE" = true ]; then
-			sed -i "s#Icon=$GAMEDIR/icon.png#Icon=am2r#" "$desktopPath"
+			sed -i "s#Icon=$output/icon.png#Icon=am2r#" "$desktopPath"
 		fi
 
 		if [ "$APPIMAGE" = false ]; then
