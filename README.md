@@ -2,7 +2,7 @@
 This utility patches the official AM2R 1.1 release (Windows) to the fan-made Community Update (Linux).
 
 ## Dependencies
-The patcher and the installer only require a small amount of dependencies. Note that the Java-related packages (`java`, `jre`, `jdk`) packages are only required for building an Android APK.
+The patcher and the installer only require a small amount of dependencies. Note that the Java-related packages (`java` / `jre` / `jdk`) packages are only required for building an Android APK.
 
 ### Arch (including Manjaro, EndeavourOS, RebornOS, etc.)
 Make sure that multilib is enabled, as `lib32-libpulse` is a 32-bit library and Arch does not enable 32-bit support by default.
