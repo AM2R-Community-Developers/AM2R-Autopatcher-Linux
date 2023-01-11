@@ -1,0 +1,6 @@
+# Top most editorconfig
+root = true
+
+# Only use Tabs
+[*]
+indent_style = tab
