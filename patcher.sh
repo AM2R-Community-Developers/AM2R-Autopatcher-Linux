@@ -24,12 +24,67 @@ RESOURCES="${GAMEDIR}/assets"
 
 checkInstalled()
 {
-		local command="$1"
-		# Check wether a command is installed
-		if [ !  -x "$(command -v "${command}")" ] ; then
+	local command="$1"
+	# Check wether a command is installed
+	if [ !  -x "$(command -v "${command}")" ] ; then
 		>&2 echo "${command} is not installed! Please install '${command}' from your local package manager!"
 		exit 1
 	fi
+}
+
+checkAM2RZip()
+{
+	# Check for AM2R_11
+	if [[ -f "$1" ]]; then
+		# Argument is a file, let's extract
+		# Temp disable e so i can get non-zero exit codes
+		set +e
+		unzip -q "$1" -d "$GAMEDIR"
+		local unzipCode=$?
+		if [[ unzipCode -ne 0 ]]; then
+			>&2 echo "$1 is not a zip file or something has gone wrong during the unzipping process."
+			exit 1
+		fi
+		set -e
+	elif [[ -d "$1" ]]; then
+		echo "AM2R_11 folder found!"
+		cp -R "$1" "$GAMEDIR"
+	else
+		echo "AM2R_11 not found! Please place AM2R_11.zip (case sensitive) into \"$SCRIPT_DIR\" or provide it via command line arguments and try again."
+		exit 1
+	fi
+
+	# Check for hashes of exe, data.win, d3dll
+	# Also temp disable e so I can get non-zero exit codes
+	set +e
+	echo "fe6e75f402235e126eb75a16d2a918dc2aef1b1e3f41e5c36d198d277bc94267 $GAMEDIR/AM2R.exe" | sha256sum --status -c
+	local shaResult=$?
+	if [[ shaResult -ne 0 ]]; then
+		>&2 echo "$1 is missing \"AM2R.exe\", or it is invalid. Please ensure you have a correct AM2R_11 copy."
+		exit 1
+	fi
+
+	echo "36e4a251d7b687f2d742a8e911cb1e1185aea99e36529fcf32cd18d445a355e3 $GAMEDIR/data.win" | sha256sum --status -c
+	shaResult=$?
+	if [[ shaResult -ne 0 ]]; then
+		>&2 echo "$1 is missing \"data.win\", or it is invalid. Please ensure you have a correct AM2R_11 copy."
+		exit 1
+	fi
+
+	echo "0b28546be22c71834501f7d7185ede5d79742457331c7ee09efc14490dd64f5f $GAMEDIR/D3DX9_43.dll" | sha256sum --status -c
+	shaResult=$?
+	if [[ shaResult -ne 0 ]]; then
+		>&2 echo "$1 is missing \"D3DX9_43.dll\", or it is invalid. Please ensure you have a correct AM2R_11 copy."
+		exit 1
+	fi
+
+	# Check if game.unx exists
+	if [[ -f "$GAMEDIR/game.unx" ]]; then
+		>&2 echo "This is an unofficial Linux zip. Please ensure you have a correct AM2R_11 copy released for Windows."
+		exit 1
+	fi
+	set -e
+	echo "Valid AM2R_11 copy! Proceeding..."
 }
 
 patch_am2r ()
@@ -62,21 +117,12 @@ patch_am2r ()
 	# Create necessary directories
 	mkdir -p "$GAMEDIR" "$RESOURCES"
 
-	# Check for AM2R_11
-	if [[ -f "$AM2RZIP" ]]; then
-		echo "AM2R_11.zip found!"
-		unzip -q "$AM2RZIP" -d "$GAMEDIR"
-	elif [[ -d "$AM2RZIP" ]]; then
-		echo "AM2R_11 folder found!"
-		cp -R "$AM2RZIP" "$GAMEDIR"
-	else
-		echo "AM2R_11 not found! Please place AM2R_11.zip (case sensitive) into \"$SCRIPT_DIR\" or provide it via command line arguments and try again."
-		exit 1
-	fi
+	# Check for AM2R 1.1
+	checkAM2RZip $AM2RZIP
 
 	# Check for which OS we patch
 	if [ "$OSCHOICE" = "linux" ]; then
-		checkInstalled "patchelf"
+		#checkInstalled "patchelf"
 
 		echo "Patching for Linux..."
 		echo "Applying AM2R xdelta patch..."
