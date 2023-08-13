@@ -163,10 +163,10 @@ patch_am2r ()
 
 		# Currently, patchelf has a bug where this does not work correctly
 		# So it will stay commented out until it does
-		#echo "Patching insecure OpenSSL dependency with libcurl..."
-		#patchelf "$GAMEDIR/runner" \
-		#	--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
-		#	--replace-needed "libssl.so.1.0.0" "libcurl.so"
+		echo "Patching insecure OpenSSL dependency with libcurl..."
+		patchelf "$GAMEDIR/runner" \
+			--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
+			--replace-needed "libssl.so.1.0.0" "libcurl.so"
 
 		# An environment variable needs to be set on Mesa to avoid a race related to multithreaded shader compilation.
 		# To do this, we move the original executable to a hidden file, and create a bash script with the needed variable in place of the original.
@@ -311,7 +311,6 @@ main ()
 	echo "-------------------------------------------"
 
 	if (( $# <= 0 )); then
-		APPIMAGE=true
 		AM2RZIP="$SCRIPT_DIR/AM2R_11.zip"
 		local input=""
 		echo "Running in interactive mode. For a full list of arguments, run the script with \"--help\""
@@ -338,6 +337,14 @@ main ()
 		echo ""
 		if [[ "${input,,}" = "y" ]]; then
 			HQMUSIC=true
+		fi
+
+		echo "Install AM2R as AppImage?"
+		echo "[y/n]"
+		read -n1 input
+		echo ""
+		if [[ "${input,,}" = "y" ]]; then
+			APPIMAGE=true
 		fi
 
 		if [ $OSCHOICE = "linux" ]; then
