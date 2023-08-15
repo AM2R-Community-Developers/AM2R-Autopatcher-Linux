@@ -168,16 +168,13 @@ patch_am2r ()
 			--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
 			--replace-needed "libssl.so.1.0.0" "libcurl.so"
 
-		# An environment variable needs to be set on Mesa to avoid a race related to multithreaded shader compilation.
-		# To do this, we move the original executable to a hidden file, and create a bash script with the needed variable in place of the original.
-		echo "Creating wrapper script to fix Mesa support..."
+		# An environment variable needs to be set on Mesa to avoid a race
+		# related to multithreaded shader compilation.  To do this, we move the
+		# original executable to a hidden file, and use a bash script with the
+		# needed variable in place of the original.
+		echo "Copying wrapper script to fix Mesa support..."
 		mv "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
-		echo '
-#!/usr/bin/env bash
-# This environment variable fixes Mesa support. If another driver is used this should not do anything.
-# See https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4181 for more information.
-radeonsi_sync_compile="true" exec "$(dirname "$(readlink -f "$0")")/.runner-unwrapped" "$@"
-' > "$GAMEDIR/runner"
+		cp "$SCRIPT_DIR/data/mesa-wrapper.sh" "$GAMEDIR/runner"
 
 		chmod +x "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
 
