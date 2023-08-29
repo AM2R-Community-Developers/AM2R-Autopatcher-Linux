@@ -12,6 +12,7 @@ AM2RZIP=""
 HQMUSIC=false
 SYSTEMWIDE=false
 APPIMAGE=false
+PATCHOPENSSL=false
 PREFIX=""
 
 # Patching internal variables
@@ -156,17 +157,16 @@ patch_am2r ()
 			! [[ "${target}" = "${target,,}" ]] && mv "${target}" "${target,,}"
 		' \;
 
-		# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
-		# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
-		# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
-		# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
-
-		# Currently, patchelf has a bug where this does not work correctly
-		# So it will stay commented out until it does
-		echo "Patching insecure OpenSSL dependency with libcurl..."
-		patchelf "$GAMEDIR/runner" \
-			--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
-			--replace-needed "libssl.so.1.0.0" "libcurl.so"
+		if [ "$PATCHOPENSSL" = true ]; then
+			# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
+			# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
+			# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
+			# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
+			echo "Patching insecure OpenSSL dependency with libcurl..."
+			patchelf "$GAMEDIR/runner" \
+				--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
+				--replace-needed "libssl.so.1.0.0" "libcurl.so"
+		fi
 
 		# An environment variable needs to be set on Mesa to avoid a race
 		# related to multithreaded shader compilation.  To do this, we move the
@@ -379,6 +379,10 @@ main ()
 			APPIMAGE=true
 			shift # past argument
 			;;
+		--patchopenssl)
+			PATCHOPENSSL=true
+			shift
+			;;
 		-p|--prefix)
 			PREFIX=$(realpath "$2")
 			shift 2 # past argument and value
@@ -392,6 +396,7 @@ main ()
 			echo -e "-m, --hqmusic\t\t\tIf provided, high quality music will be used, otherwise low quality music will be used instead."
 			echo -e "-w, --systemwide\t\tIf provided, Linux will get installed systemwide, otherwise Linux will get installed portably. Has no effect on Android."
 			echo -e "-a, --appimage\t\t\tIf provided, an AppImage will get generated, otherwise the raw binary will get generated instead. Has no effect on Android."
+			echo -e "--patchopenssl\t\t\tIf provided, the raw binary will have OpenSSL 1.0.0 patched to point to libcurl. Has no effect if the -a flag is used."
 			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide \"<directory where this script resides>/am2r_<VersionNumber>\". As systemwide is ignored on Android, for Android this will always default to the latter option."
 			echo -e "-z, --am2rzip\t\t\tThe path to the AM2R_11 zip or directory. Default is  \"<directory where the script resides>/AM2R_11.zip\""
 			exit 0
