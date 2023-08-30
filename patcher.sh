@@ -158,7 +158,7 @@ patch_am2r ()
 		' \;
 
 		if [ "$PATCHOPENSSL" = true ]; then
-			# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
+			# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and deprecated.
 			# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
 			# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
 			# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
@@ -379,7 +379,7 @@ main ()
 			APPIMAGE=true
 			shift # past argument
 			;;
-		--patchopenssl)
+		-l|--patchopenssl)
 			PATCHOPENSSL=true
 			shift
 			;;
@@ -396,7 +396,7 @@ main ()
 			echo -e "-m, --hqmusic\t\t\tIf provided, high quality music will be used, otherwise low quality music will be used instead."
 			echo -e "-w, --systemwide\t\tIf provided, Linux will get installed systemwide, otherwise Linux will get installed portably. Has no effect on Android."
 			echo -e "-a, --appimage\t\t\tIf provided, an AppImage will get generated, otherwise the raw binary will get generated instead. Has no effect on Android."
-			echo -e "--patchopenssl\t\t\tIf provided, the raw binary will have OpenSSL 1.0.0 patched to point to libcurl. Has no effect if the -a flag is used."
+			echo -e "-l, --patchopenssl\t\t\tIf provided, the game binary will have the deprecated OpenSSL 1.0.0 patched to point to libcurl. Has no effect for the AppImage option."
 			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide \"<directory where this script resides>/am2r_<VersionNumber>\". As systemwide is ignored on Android, for Android this will always default to the latter option."
 			echo -e "-z, --am2rzip\t\t\tThe path to the AM2R_11 zip or directory. Default is  \"<directory where the script resides>/AM2R_11.zip\""
 			exit 0
