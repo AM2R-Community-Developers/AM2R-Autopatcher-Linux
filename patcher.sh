@@ -158,11 +158,11 @@ patch_am2r ()
 		' \;
 
 		if [ "$PATCHOPENSSL" = true ]; then
-			# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and deprecated.
+			# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
 			# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
 			# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
 			# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
-			echo "Patching insecure OpenSSL dependency with libcurl..."
+			echo "Patching deprecated OpenSSL dependency with libcurl..."
 			patchelf "$GAMEDIR/runner" \
 				--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
 				--replace-needed "libssl.so.1.0.0" "libcurl.so"
@@ -308,6 +308,7 @@ main ()
 	echo "-------------------------------------------"
 
 	if (( $# <= 0 )); then
+		APPIMAGE=true
 		AM2RZIP="$SCRIPT_DIR/AM2R_11.zip"
 		local input=""
 		echo "Running in interactive mode. For a full list of arguments, run the script with \"--help\""
@@ -334,14 +335,6 @@ main ()
 		echo ""
 		if [[ "${input,,}" = "y" ]]; then
 			HQMUSIC=true
-		fi
-
-		echo "Install AM2R as AppImage?"
-		echo "[y/n]"
-		read -n1 input
-		echo ""
-		if [[ "${input,,}" = "y" ]]; then
-			APPIMAGE=true
 		fi
 
 		if [ $OSCHOICE = "linux" ]; then
