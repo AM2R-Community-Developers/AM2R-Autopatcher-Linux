@@ -12,6 +12,7 @@ AM2RZIP=""
 HQMUSIC=false
 SYSTEMWIDE=false
 APPIMAGE=false
+PATCHOPENSSL=false
 PREFIX=""
 
 # Patching internal variables
@@ -156,28 +157,24 @@ patch_am2r ()
 			! [[ "${target}" = "${target,,}" ]] && mv "${target}" "${target,,}"
 		' \;
 
-		# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
-		# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
-		# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
-		# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
+		if [ "$PATCHOPENSSL" = true ]; then
+			# GameMaker games (like AMR2) link to OpenSSL 1.0.0, which is outdated and insecure.
+			# When attempting to link to newer versions, an error is raised at runtime claiming it cannot find
+			# the outdated version of OpenSSL, even though it has been patched to link to the newer version.
+			# After replacing it with libcurl, versioning is ignored, and the binary starts just fine.
+			echo "Patching deprecated OpenSSL dependency with libcurl..."
+			patchelf "$GAMEDIR/runner" \
+				--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
+				--replace-needed "libssl.so.1.0.0" "libcurl.so"
+		fi
 
-		# Currently, patchelf has a bug where this does not work correctly
-		# So it will stay commented out until it does
-		#echo "Patching insecure OpenSSL dependency with libcurl..."
-		#patchelf "$GAMEDIR/runner" \
-		#	--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
-		#	--replace-needed "libssl.so.1.0.0" "libcurl.so"
-
-		# An environment variable needs to be set on Mesa to avoid a race related to multithreaded shader compilation.
-		# To do this, we move the original executable to a hidden file, and create a bash script with the needed variable in place of the original.
-		echo "Creating wrapper script to fix Mesa support..."
+		# An environment variable needs to be set on Mesa to avoid a race
+		# related to multithreaded shader compilation.  To do this, we move the
+		# original executable to a hidden file, and use a bash script with the
+		# needed variable in place of the original.
+		echo "Copying wrapper script to fix Mesa support..."
 		mv "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
-		echo '
-#!/usr/bin/env bash
-# This environment variable fixes Mesa support. If another driver is used this should not do anything.
-# See https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4181 for more information.
-radeonsi_sync_compile="true" exec "$(dirname "$(readlink -f "$0")")/.runner-unwrapped" "$@"
-' > "$GAMEDIR/runner"
+		cp "$SCRIPT_DIR/data/mesa-wrapper.sh" "$GAMEDIR/runner"
 
 		chmod +x "$GAMEDIR/runner" "$GAMEDIR/.runner-unwrapped"
 
@@ -375,6 +372,10 @@ main ()
 			APPIMAGE=true
 			shift # past argument
 			;;
+		-l|--patchopenssl)
+			PATCHOPENSSL=true
+			shift
+			;;
 		-p|--prefix)
 			PREFIX=$(realpath "$2")
 			shift 2 # past argument and value
@@ -388,6 +389,7 @@ main ()
 			echo -e "-m, --hqmusic\t\t\tIf provided, high quality music will be used, otherwise low quality music will be used instead."
 			echo -e "-w, --systemwide\t\tIf provided, Linux will get installed systemwide, otherwise Linux will get installed portably. Has no effect on Android."
 			echo -e "-a, --appimage\t\t\tIf provided, an AppImage will get generated, otherwise the raw binary will get generated instead. Has no effect on Android."
+			echo -e "-l, --patchopenssl\t\t\tIf provided, the game binary will have the deprecated OpenSSL 1.0.0 dependency patched to point to libcurl. Has no effect for the AppImage option."
 			echo -e "-p, --prefix\t\t\tThe prefix used for patching operations. Default for systemwide is \"/usr/local\" and for non-systemwide \"<directory where this script resides>/am2r_<VersionNumber>\". As systemwide is ignored on Android, for Android this will always default to the latter option."
 			echo -e "-z, --am2rzip\t\t\tThe path to the AM2R_11 zip or directory. Default is  \"<directory where the script resides>/AM2R_11.zip\""
 			exit 0
