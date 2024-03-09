@@ -165,7 +165,8 @@ patch_am2r ()
 			echo "Patching deprecated OpenSSL dependency with libcurl..."
 			patchelf "$GAMEDIR/runner" \
 				--replace-needed "libcrypto.so.1.0.0" "libcurl.so" \
-				--replace-needed "libssl.so.1.0.0" "libcurl.so"
+				--replace-needed "libssl.so.1.0.0" "libcurl.so" \
+				--clear-symbol-version X509_free
 		fi
 
 		# An environment variable needs to be set on Mesa to avoid a race
